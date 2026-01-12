@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Listerine Sampling Campaign 2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK (Compat version - Tương thích tốt nhất cho GitHub Pages) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <style>
+        body { font-family: 'Lexend', sans-serif; background-color: #f8f9fc; -webkit-tap-highlight-color: transparent; }
+        .bg-purple-main { background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%); }
+        .glass-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border: 1px solid rgba(109, 40, 217, 0.1); }
+        .hidden { display: none !important; }
+        .success-anim { animation: successIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes successIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        input:focus, select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1); }
+        .loading-ring { border: 3px solid #f3f3f3; border-top: 3px solid #6d28d9; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center items-start overflow-x-hidden">
+
+    <div id="app-container" class="w-full max-w-md min-h-screen bg-white shadow-2xl flex flex-col relative">
+        
+        <!-- MÀN HÌNH CHỜ -->
+        <div id="view-loading" class="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center hidden">
+            <div class="loading-ring mb-4"></div>
+            <p id="loading-text" class="text-purple-900 font-bold text-xs uppercase tracking-widest text-center px-10 italic">Đang đồng bộ bảo mật...</p>
+        </div>
+
+        <!-- HEADER -->
+        <header class="bg-purple-main p-8 text-center text-white rounded-b-[3rem] shadow-xl relative z-10">
+            <h1 id="brand-logo" class="text-3xl font-black italic tracking-tighter mb-1 cursor-pointer select-none active:scale-95 transition-transform">LISTERINE®</h1>
+            <p class="text-purple-100 text-[9px] font-bold uppercase tracking-[0.4em]">BÍNH NGỌ KHỎE XINH - ĂN TẾT HẾT MÌNH</p>
+        </header>
+
+        <!-- NỘI DUNG -->
+        <main class="flex-grow p-6 -mt-6 relative z-20">
+            
+            <!-- VIEW ĐĂNG KÝ -->
+            <div id="view-register" class="glass-card rounded-[2.5rem] p-7 shadow-2xl">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-extrabold text-slate-800 uppercase italic leading-tight">Đăng ký nhận ngay quà tặng 100ml</h2>
+                    <div class="mt-3 inline-flex items-center gap-2 px-4 py-1.5 bg-purple-50 rounded-full text-purple-700 text-[10px] font-extrabold border border-purple-100">
+                        <span id="status-dot" class="w-2 h-2 bg-yellow-400 rounded-full transition-colors duration-500"></span>
+                        <span id="store-display">Đang kết nối...</span>
+                    </div>
+                </div>
+
+                <form id="form-registration" class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block ml-1">Số điện thoại *</label>
+                        <input required type="tel" id="input-phone" placeholder="09xxxxxxx" class="w-full px-5 py-4 bg-slate-50 rounded-2xl border-2 border-transparent transition-all font-bold text-slate-800 text-lg outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block ml-1">Email</label>
+                        <input type="email" id="input-email" placeholder="example@email.com" class="w-full px-5 py-4 bg-slate-50 rounded-2xl border-2 border-transparent transition-all font-bold text-slate-800 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block ml-1">Tuổi *</label>
+                        <select required id="input-age" class="w-full px-5 py-4 bg-slate-50 rounded-2xl border-2 border-transparent transition-all font-bold text-slate-800 appearance-none outline-none">
+                            <option value="">Chọn độ tuổi</option>
+                            <option value="Dưới 18">Dưới 18</option>
+                            <option value="18 - 25">18 - 25</option>
+                            <option value="26 - 35">26 - 35</option>
+                            <option value="Trên 35">Trên 35</option>
+                        </select>
+                    </div>
+
+                    <div id="error-msg" class="hidden p-4 bg-red-50 text-red-600 text-[11px] font-bold rounded-xl border border-red-100 text-center italic leading-relaxed"></div>
+
+                    <button type="submit" id="submit-btn" class="w-full bg-purple-600 text-white py-5 rounded-2xl font-black text-lg shadow-lg active:scale-95 transition-all uppercase tracking-wide mt-2">
+                        Xác nhận & Nhận mã
+                    </button>
+                </form>
+            </div>
+
+            <!-- VIEW THÀNH CÔNG -->
+            <div id="view-success" class="hidden glass-card rounded-[2.5rem] p-8 shadow-2xl text-center success-anim">
+                <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <h2 class="text-2xl font-black text-slate-800 mb-2 uppercase italic leading-tight">Đăng ký thành công!</h2>
+                <p class="text-slate-500 text-xs mb-8 leading-relaxed px-4">Hãy đưa mã dưới đây cho nhân viên tại quầy để nhận ngay 01 chai Listerine 100ml.</p>
+                
+                <div class="bg-slate-50 rounded-[2.5rem] p-10 mb-8 border border-purple-100 shadow-inner relative overflow-hidden ring-4 ring-purple-50">
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-purple-600"></div>
+                    <p class="text-[10px] font-bold text-purple-400 uppercase mb-2 tracking-[0.3em]">Mã quà tặng của bạn</p>
+                    <p id="code-display" class="text-5xl font-black text-purple-900 font-mono italic uppercase">-----</p>
+                </div>
+
+                <div class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-6 italic text-center">Trạm: <span id="success-store" class="text-purple-600">...</span></div>
+                
+                <button onclick="window.location.reload()" class="text-purple-600 font-black uppercase text-[10px] border-b-2 border-purple-200 pb-1">Đăng ký mới</button>
+            </div>
+        </main>
+
+        <!-- VIEW LOGIN ADMIN -->
+        <div id="view-admin-login" class="hidden fixed inset-0 z-[150] bg-white/95 backdrop-blur-md flex items-center justify-center p-8">
+            <div class="w-full max-w-xs text-center">
+                <h3 class="text-xl font-black text-slate-800 uppercase mb-6 italic">Xác minh quyền hạn</h3>
+                <input type="password" id="admin-pin" placeholder="Nhập PIN bảo mật" class="w-full p-5 bg-slate-50 rounded-2xl mb-4 text-center font-black tracking-widest text-xl border-2 border-transparent focus:border-purple-600 outline-none shadow-inner">
+                <div class="flex gap-2">
+                    <button onclick="showView('register')" class="flex-1 py-4 font-bold text-slate-400 uppercase text-[10px]">Quay lại</button>
+                    <button id="btn-do-login" class="flex-1 bg-slate-800 text-white py-4 rounded-2xl font-bold uppercase text-[10px] shadow-lg">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW DASHBOARD ADMIN -->
+        <div id="view-admin-dashboard" class="hidden fixed inset-0 z-[200] bg-slate-50 flex flex-col p-4 md:p-8 overflow-hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
+                <div>
+                    <h2 class="text-2xl font-black text-purple-950 uppercase italic leading-none">Dữ liệu Campaign</h2>
+                    <p id="data-count" class="text-[10px] font-bold text-slate-400 uppercase mt-2">Đang tải...</p>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <button id="btn-open-qr" class="flex-1 md:flex-none bg-purple-600 text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase shadow-lg">Lấy QR</button>
+                    <button id="btn-export-csv" class="flex-1 md:flex-none bg-green-600 text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase shadow-lg">Xuất Excel</button>
+                    <button onclick="showView('register')" class="flex-1 md:flex-none bg-white border border-slate-200 px-5 py-3 rounded-xl font-black text-[10px] text-slate-500 uppercase">Đóng</button>
+                </div>
+            </div>
+            
+            <div class="bg-white flex-grow rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden flex flex-col">
+                <div class="overflow-x-auto flex-grow">
+                    <table class="w-full text-left text-[11px] border-collapse min-w-[700px]">
+                        <thead class="bg-slate-50 sticky top-0 border-b border-slate-200 z-10">
+                            <tr>
+                                <th class="p-4 font-black text-slate-400 uppercase tracking-widest">Thời gian</th>
+                                <th class="p-4 font-black text-slate-400 uppercase tracking-widest">SĐT</th>
+                                <th class="p-4 font-black text-slate-400 uppercase tracking-widest">Email</th>
+                                <th class="p-4 font-black text-slate-400 uppercase tracking-widest text-center">Tuổi</th>
+                                <th class="p-4 font-black text-slate-400 uppercase tracking-widest text-center">Trạm</th>
+                                <th class="p-4 font-black text-slate-400 uppercase tracking-widest text-center">Mã Quà</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body" class="divide-y divide-slate-50 font-medium text-slate-700 text-[10px]">
+                            <tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Đang tải dữ liệu...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW QR PANEL -->
+        <div id="view-qr-panel" class="hidden fixed inset-0 z-[250] bg-white flex flex-col p-6 overflow-y-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-xl font-black text-purple-900 uppercase italic">Mã QR các trạm</h2>
+                <button onclick="showView('admin-dashboard')" class="bg-slate-100 p-2 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div id="qr-container" class="grid grid-cols-1 gap-6 pb-10"></div>
+        </div>
+
+        <!-- FOOTER: NÚT QUẢN TRỊ ẨN -->
+        <footer class="p-10 flex flex-col items-center border-t border-slate-50 mt-auto bg-white/50">
+            <button onclick="showView('admin-login')" class="text-slate-200 hover:text-slate-400 transition-all text-[7px] uppercase tracking-[0.2em] font-medium py-2">
+                Listerine Campaign 2026
+            </button>
+        </footer>
+    </div>
+
+    <!-- SCRIPT CHÍNH -->
+    <script>
+        // ========================================================
+        // 1. FIREBASE CONFIG (DỰ ÁN: listerine-tet2026)
+        // ========================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmoGlurl-6yYPMa32Vop0N57P8DmXYOcw",
+            authDomain: "listerine-tet2026.firebaseapp.com",
+            projectId: "listerine-tet2026",
+            storageBucket: "listerine-tet2026.firebasestorage.app",
+            messagingSenderId: "76253494252",
+            appId: "1:76253494252:web:54e219e2de091fa779dec9",
+            measurementId: "G-EL0FZRC146"
+        };
+        
+        // --- THAY ĐỔI MÃ PIN TẠI ĐÂY (DÒNG 153) ---
+        // Hãy thay số "2026" thành mã PIN bí mật của bạn.
+        const ADMIN_PIN = "Vinst@r@0625"; 
+
+        // ========================================================
+        
+        const STORES = {
+            'denda_lvs': 'Đen Đá - LVS',
+            'denda_pasteur': 'Đen Đá - Pasteur',
+            'bamos_so10': 'Bamos - Số 10',
+            'bamos_ks': 'Bamos - Kim Sơn',
+            'bamos_dqh': 'Bamos - DQH'
+        };
+        const BASE_URL = "https://samplingcampaigns-hub.github.io/Listerine-Tet-Binh-Ngo/";
+        const appId = 'listerine-v6k-tet2026';
+
+        let db, auth, currentUser, currentStoreId = 'denda_lvs', adminDataList = [], isReady = false;
+
+        function showView(name) {
+            const views = ['view-loading', 'view-register', 'view-success', 'view-admin-login', 'view-admin-dashboard', 'view-qr-panel'];
+            views.forEach(v => document.getElementById(v).classList.add('hidden'));
+            document.getElementById('view-' + name).classList.remove('hidden');
+            if(name === 'admin-dashboard') startAdminRealtime();
+        }
+
+        window.onload = async function() {
+            const params = new URLSearchParams(window.location.search);
+            const s = params.get('store');
+            if(s && STORES[s]) currentStoreId = s;
+            document.getElementById('store-display').innerText = STORES[currentStoreId];
+
+            try {
+                if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                auth = firebase.auth();
+                
+                // Đăng nhập ẩn danh (Anonymous Auth)
+                const cred = await auth.signInAnonymously();
+                currentUser = cred.user;
+                isReady = true;
+                
+                document.getElementById('status-dot').className = 'w-2 h-2 bg-green-500 rounded-full';
+                document.getElementById('store-display').innerText = STORES[currentStoreId];
+
+                const local = localStorage.getItem(`lis_reg_${appId}`);
+                if (local) renderSuccess(JSON.parse(local));
+            } catch (err) {
+                document.getElementById('error-msg').innerText = "Hệ thống đang kết nối. Vui lòng thử lại.";
+                document.getElementById('error-msg').classList.remove('hidden');
+            }
+        };
+
+        function renderSuccess(data) {
+            document.getElementById('code-display').innerText = data.giftCode;
+            document.getElementById('success-store').innerText = data.storeName;
+            showView('success');
+        }
+
+        document.getElementById('form-registration').onsubmit = async function(e) {
+            e.preventDefault();
+            if (!isReady) return;
+            const phone = document.getElementById('input-phone').value.trim();
+            const email = document.getElementById('input-email').value.trim() || 'N/A';
+            const age = document.getElementById('input-age').value;
+            
+            showView('loading');
+
+            try {
+                const base = `artifacts/${appId}/public/data`;
+                
+                // Kiểm tra SĐT duy nhất
+                const phoneSnap = await db.doc(`${base}/phones/${phone}`).get();
+                if (phoneSnap.exists) throw new Error("Số điện thoại này đã nhận quà rồi!");
+
+                // Tạo mã quà tặng
+                const giftCode = 'LIS' + Math.random().toString(36).substring(2, 7).toUpperCase();
+                const payload = { 
+                    phone, email, age, giftCode, 
+                    storeName: STORES[currentStoreId], 
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+                };
+
+                // Ghi dữ liệu đồng bộ
+                const batch = db.batch();
+                batch.set(db.doc(`${base}/registrations/${giftCode}`), payload);
+                batch.set(db.doc(`${base}/phones/${phone}`), { uid: currentUser.uid });
+                batch.set(db.doc(`${base}/devices/${currentUser.uid}`), payload);
+                await batch.commit();
+
+                localStorage.setItem(`lis_reg_${appId}`, JSON.stringify(payload));
+                renderSuccess(payload);
+            } catch (err) {
+                showView('register');
+                document.getElementById('error-msg').innerText = err.message;
+                document.getElementById('error-msg').classList.remove('hidden');
+            }
+        };
+
+        document.getElementById('btn-do-login').onclick = function() {
+            if (document.getElementById('admin-pin').value === ADMIN_PIN) {
+                document.getElementById('admin-pin').value = "";
+                showView('admin-dashboard');
+            } else {
+                alert("Mã PIN không chính xác!");
+            }
+        };
+
+        let adminUnsub = null;
+        function startAdminRealtime() {
+            if (adminUnsub) adminUnsub();
+            adminUnsub = db.collection(`artifacts/${appId}/public/data/registrations`).onSnapshot(snap => {
+                adminDataList = snap.docs.map(doc => doc.data());
+                adminDataList.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                document.getElementById('data-count').innerText = `Tổng cộng: ${adminDataList.length} / 6.000 chai`;
+                document.getElementById('admin-table-body').innerHTML = adminDataList.map(d => `
+                    <tr class="hover:bg-slate-50 border-b border-slate-50 text-[10px]">
+                        <td class="p-4 text-slate-400 font-medium">${d.createdAt?.toDate().toLocaleString('vi-VN') || '...'}</td>
+                        <td class="p-4 font-black text-slate-800">${d.phone}</td>
+                        <td class="p-4 text-slate-500">${d.email}</td>
+                        <td class="p-4 text-center font-bold text-slate-400">${d.age}</td>
+                        <td class="p-4 font-bold text-purple-600 uppercase text-center">${d.storeName}</td>
+                        <td class="p-4 text-center"><span class="bg-purple-100 text-purple-900 px-2.5 py-1 rounded-md font-black font-mono uppercase">${d.giftCode}</span></td>
+                    </tr>`).join('');
+            });
+        }
+
+        document.getElementById('btn-open-qr').onclick = function() {
+            const container = document.getElementById('qr-container');
+            container.innerHTML = '';
+            Object.keys(STORES).forEach(key => {
+                const url = `${BASE_URL}?store=${key}`;
+                const qr = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
+                container.innerHTML += `<div class="bg-slate-50 p-6 rounded-[2rem] flex flex-col items-center border shadow-sm">
+                    <p class="font-black text-slate-800 mb-4 text-xs uppercase italic">${STORES[key]}</p>
+                    <img src="${qr}" class="w-40 h-40 mb-4 bg-white p-2 rounded-xl">
+                    <a href="${qr}" target="_blank" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-[10px] font-bold uppercase shadow-md">Tải ảnh QR</a>
+                </div>`;
+            });
+            showView('qr-panel');
+        };
+
+        document.getElementById('btn-export-csv').onclick = function() {
+            let csv = "\uFEFFThời gian,SĐT,Email,Tuổi,Trạm,Mã quà tặng\n";
+            adminDataList.forEach(d => {
+                const date = d.createdAt?.toDate().toLocaleString('vi-VN') || '...';
+                csv += `"${date}","'${d.phone}","${d.email}","${d.age}","${d.storeName}","${d.giftCode}"\n`;
+            });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+            link.download = `LISTERINE_REPORT_2026.csv`;
+            link.click();
+        };
+
+        // Logo double click để xóa lịch sử trên thiết bị test
+        document.getElementById('brand-logo').ondblclick = function() {
+            if(confirm("Xóa lịch sử đăng ký trên thiết bị này?")) {
+                localStorage.removeItem(`lis_reg_${appId}`);
+                window.location.reload();
+            }
+        };
+    </script>
+</body>
+</html>
