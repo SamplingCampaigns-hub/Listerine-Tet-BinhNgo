@@ -21,10 +21,7 @@
         .login-card { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 2.5rem; width: 100%; max-width: 400px; padding: 40px; text-align: center; }
         .hidden { display: none !important; }
         
-        /* Input styling for password */
-        #password-input {
-            -webkit-text-security: disc; /* Bảo mật hơn cho input type text để tránh auto-fill sai */
-        }
+        #password-input { -webkit-text-security: disc; }
     </style>
 </head>
 <body class="p-6 md:p-10">
@@ -39,15 +36,14 @@
             <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-8">Hệ thống bảo mật 2026</p>
             
             <form id="login-form" class="space-y-4">
-                <!-- Thêm autocomplete="off" và spellcheck="false" để tránh lỗi gõ tiếng Việt -->
                 <input type="text" id="password-input" autocomplete="off" spellcheck="false" placeholder="Nhập mật khẩu..." class="w-full bg-slate-800 border border-white/5 p-4 rounded-2xl text-white outline-none focus:border-sky-500 text-center font-bold">
                 <button type="submit" id="btn-login" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all">TRUY CẬP NGAY</button>
             </form>
-            <p id="error-msg" class="text-red-400 text-[10px] font-bold mt-4 uppercase hidden">Mật khẩu chưa đúng, chị kiểm tra Unikey nhé!</p>
+            <p id="error-msg" class="text-red-400 text-[10px] font-bold mt-4 uppercase hidden">Mật khẩu chưa đúng, chị kiểm tra lại nhé!</p>
         </div>
     </div>
 
-    <!-- NỘI DUNG CHÍNH (ẨN MẶC ĐỊNH) -->
+    <!-- NỘI DUNG CHÍNH -->
     <div id="main-content" class="hidden">
         <div class="max-w-7xl mx-auto">
             <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -55,7 +51,7 @@
                     <h1 class="text-2xl header-text">DỮ LIỆU CAMPAIGN</h1>
                     <div class="mt-2 flex items-center gap-2">
                         <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest border border-slate-200 px-2 py-1 rounded">TỔNG CỘNG:</span>
-                        <span id="counter" class="text-sm font-extrabold text-red-500">Đang tải...</span>
+                        <span id="counter" class="text-sm font-extrabold text-red-500">Đang nạp...</span>
                     </div>
                 </div>
                 <div class="flex gap-2">
@@ -82,7 +78,7 @@
                                 <td colspan="6" class="p-20 text-center">
                                     <div class="flex flex-col items-center justify-center gap-4">
                                         <div class="loading-spinner"></div>
-                                        <span id="loading-text" class="text-slate-400 uppercase tracking-widest text-[10px]">Đang nạp toàn bộ 5440+ dữ liệu thực tế...</span>
+                                        <span id="loading-text" class="text-slate-400 uppercase tracking-widest text-[10px]">Đang nạp 5440+ dữ liệu từ kho...</span>
                                     </div>
                                 </td>
                             </tr>
@@ -94,7 +90,6 @@
     </div>
 
     <script>
-        // MẬT KHẨU: vinstar2026
         const SECURE_KEY = "vinstar2026"; 
 
         const loginForm = document.getElementById('login-form');
@@ -104,16 +99,14 @@
 
         loginForm.onsubmit = (e) => {
             e.preventDefault();
-            // Lấy giá trị và xóa khoảng trắng ở 2 đầu (.trim())
             const input = document.getElementById('password-input').value.trim();
             
             if (input.toLowerCase() === SECURE_KEY) {
-                loginScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loginScreen.classList.add('hidden');
-                    mainContent.classList.remove('hidden');
-                    initFirebase();
-                }, 400);
+                // ẨN MÀN HÌNH KHÓA NGAY LẬP TỨC
+                loginScreen.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+                // BẮT ĐẦU NẠP DỮ LIỆU
+                initFirebase();
             } else {
                 errorMsg.classList.remove('hidden');
                 document.getElementById('password-input').value = "";
@@ -130,7 +123,8 @@
                 appId: "1:76253494252:web:54e219e2de091fa779dec9"
             };
 
-            const appId = 'listerine-100ml-campaign';
+            // 🚩 CHỊ HỒNG LƯU Ý: Em đổi mã dự án về đúng tên repository để tìm thấy 5440 data
+            const appId = 'Listerine-Tet-BinhNgo';
 
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
@@ -139,12 +133,13 @@
             const auth = firebase.auth();
 
             auth.signInAnonymously().then(() => {
+                // Đường dẫn chuẩn Rule 1
                 const colRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations');
                 
                 colRef.onSnapshot((snapshot) => {
                     let allData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     
-                    // Sắp xếp dữ liệu trong JS để không bị lỗi 404/Empty do thiếu Index
+                    // Sắp xếp dữ liệu trong JS (Quy tắc 2)
                     allData.sort((a, b) => {
                         const timeA = a.timestamp?.seconds || 0;
                         const timeB = b.timestamp?.seconds || 0;
@@ -154,7 +149,7 @@
                     renderTable(allData);
                 }, (err) => {
                     console.error("Lỗi:", err);
-                    document.getElementById('loading-text').innerText = "Lỗi kết nối. Chị kiểm tra lại cấu hình nhé!";
+                    document.getElementById('loading-text').innerText = "Không có quyền xem kho dữ liệu này.";
                 });
             });
         }
@@ -164,8 +159,13 @@
             const counter = document.getElementById('counter');
             
             counter.innerText = data.length.toLocaleString() + " / 6.000 CHAI";
-            body.innerHTML = '';
+            
+            if (data.length === 0) {
+                body.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Kho dữ liệu hiện đang trống.</td></tr>`;
+                return;
+            }
 
+            body.innerHTML = '';
             data.forEach(item => {
                 const dateStr = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleString('vi-VN') : '---';
 
@@ -175,7 +175,7 @@
                         <td class="px-8 py-4 text-slate-800">${item.phone || 'N/A'}</td>
                         <td class="px-8 py-4 text-slate-500 text-xs">${item.email || 'N/A'}</td>
                         <td class="px-8 py-4 text-center text-slate-400">${item.age || 'N/A'}</td>
-                        <td class="px-8 py-4 uppercase text-purple-600 text-xs">${item.store || item.station || 'Trạm chính'}</td>
+                        <td class="px-8 py-4 uppercase text-purple-600 text-xs italic">${item.store || item.station || 'Trạm chính'}</td>
                         <td class="px-8 py-4 text-right"><span class="badge-purple font-mono tracking-widest">${item.code || '---'}</span></td>
                     </tr>
                 `;
@@ -193,7 +193,7 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `Listerine_Full_Data_Export.csv`;
+            link.download = `Full_Data_Listerine_2026.csv`;
             link.click();
         };
     </script>
