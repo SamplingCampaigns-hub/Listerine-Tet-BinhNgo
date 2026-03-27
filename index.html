@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listerine Sampling - Nhận Quà Miễn Phí</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Sử dụng đúng phiên bản Firebase từ file cũ của chị -->
+    <!-- Sử dụng đúng thư viện Firebase như bản cũ của chị -->
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"></script>
@@ -14,7 +14,7 @@
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #f3f4f6; 
+            background-color: #ffffff; 
             margin: 0;
             display: flex;
             justify-content: center;
@@ -31,7 +31,7 @@
             flex-direction: column;
         }
 
-        /* Header hình vòm cung ngược chuẩn thiết kế chị thích */
+        /* Header hình vòm cung ngược chuẩn ảnh mẫu image_858809.png */
         .header-section {
             background: linear-gradient(180deg, #6219ff 0%, #4f17d7 100%);
             height: 180px;
@@ -47,7 +47,7 @@
             flex-shrink: 0;
         }
 
-        /* Thẻ Card trắng bo góc lớn */
+        /* Thẻ Card trắng bo góc lớn đè lên header */
         .form-card {
             background: white;
             margin: -65px 20px 40px 20px;
@@ -104,9 +104,7 @@
             outline: none;
         }
 
-        .field-input::placeholder {
-            color: #cbd5e1;
-        }
+        .field-input::placeholder { color: #cbd5e1; }
 
         .btn-confirm {
             background-color: #9419ff;
@@ -121,8 +119,8 @@
             margin-top: 10px;
             box-shadow: 0 12px 30px rgba(148, 25, 255, 0.3);
             transition: all 0.2s;
-            border: none;
             cursor: pointer;
+            border: none;
         }
 
         .btn-confirm:active { transform: scale(0.97); }
@@ -137,8 +135,7 @@
 
         .consent-wrapper input {
             accent-color: #9419ff;
-            width: 18px;
-            height: 18px;
+            width: 18px; height: 18px;
             margin-top: 2px;
         }
 
@@ -159,7 +156,7 @@
             text-align: center;
             cursor: pointer;
         }
-
+        
         .hidden { display: none !important; }
     </style>
 </head>
@@ -176,10 +173,7 @@
         <div class="form-card">
             <div id="step-form">
                 <div class="text-center flex flex-col items-center">
-                    <h2 class="title-text">
-                        Đăng ký nhận ngay quà <br> tặng 100ml
-                    </h2>
-                    
+                    <h2 class="title-text">Đăng ký nhận ngay quà <br> tặng 100ml</h2>
                     <div class="location-tag">
                         <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
                         <span id="location-tag-text" class="text-[10px] font-black text-purple-600 uppercase italic">Đang xác định điểm...</span>
@@ -191,32 +185,28 @@
                         <label class="input-label">Số điện thoại *</label>
                         <input type="tel" id="phone" required placeholder="090xxxxxxx" class="field-input">
                     </div>
-
                     <div>
                         <label class="input-label">Email</label>
                         <input type="email" id="email" placeholder="example@email.com" class="field-input">
                     </div>
-
                     <div>
                         <label class="input-label">Tuổi *</label>
                         <select id="age" required class="field-input appearance-none bg-no-repeat bg-[right_24px_center]" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23cbd5e1%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E'); background-size: 16px;">
                             <option value="" disabled selected>Chọn độ tuổi</option>
-                            <option value="18 - 25">18 - 25</option>
-                            <option value="26 - 35">26 - 35</option>
-                            <option value="Trên 35">Trên 35</option>
+                            <option value="18">18 - 25</option>
+                            <option value="26">26 - 35</option>
+                            <option value="36">Trên 35</option>
                         </select>
                     </div>
 
                     <div class="consent-wrapper">
                         <input type="checkbox" id="consent" required>
                         <label for="consent" class="consent-label">
-                            Tôi đồng ý chia sẻ thông tin và cho phép nhãn hàng sử dụng dữ liệu cá nhân cho mục đích tư vấn, nhận thông tin ưu đãi từ nhãn hàng.
+                            Tôi đồng ý chia sẻ thông tin và cho phép nhãn hàng sử dụng dữ liệu cá nhân cho mục đích tư vấn, nhận thông tin ưu đãi.
                         </label>
                     </div>
 
-                    <button type="submit" id="btn-submit" class="btn-confirm">
-                        Xác nhận & Nhận mã
-                    </button>
+                    <button type="submit" id="btn-submit" class="btn-confirm">Xác nhận & Nhận mã</button>
                 </form>
             </div>
 
@@ -228,13 +218,11 @@
                     </svg>
                 </div>
                 <h2 class="text-3xl font-black text-slate-800 uppercase italic tracking-tighter mb-3">Đăng ký xong!</h2>
-                <p class="text-slate-400 text-sm font-medium mb-12 italic">Đưa màn hình này cho nhân viên tại quầy để nhận quà nhé.</p>
-                
+                <p class="text-slate-400 text-sm font-medium mb-12">Đưa màn hình này cho nhân viên tại quầy để nhận quà nhé.</p>
                 <div class="w-full bg-slate-50 p-10 rounded-[3rem] border-2 border-dashed border-slate-200">
-                    <span class="text-[10px] text-slate-300 font-black uppercase tracking-[0.4em] block mb-4">Mã Ưu Đãi</span>
+                    <span class="text-[10px] text-slate-300 font-black uppercase tracking-[0.4em] block mb-4">Mã Của Bạn</span>
                     <div id="code-display" class="text-5xl font-black text-purple-600 tracking-widest italic uppercase">-------</div>
                 </div>
-                
                 <button onclick="location.reload()" class="mt-16 text-slate-300 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 pb-1">Đăng ký mới</button>
             </div>
 
@@ -245,15 +233,17 @@
     </div>
 
     <script>
-        /**
-         * 🚩 CHỊ HỒNG LƯU Ý: 
-         * Em dùng cơ chế tự động: Nếu chạy trên Canvas thì dùng biến môi trường, 
-         * Nếu chạy trên GitHub thì dùng đúng AppId cũ của chị để không mất data.
+        /* * 🚩 CHỊ HỒNG LƯU Ý: 
+         * Nếu chị dán vào GitHub mà data vẫn không về, chị hãy thay đoạn { apiKey: ""... } 
+         * bằng mã Firebase của chị (tìm trong file cũ có chữ apiKey).
          */
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            // Đây là cấu hình mặc định nếu chị quên chưa định nghĩa config
-            // Hệ thống sẽ ưu tiên dùng config đang chạy trên web hiện tại của chị
-            apiKey: "AIzaSy...", // (Hệ thống sẽ tự nhận diện khi chạy thực tế)
+            apiKey: "AIzaSy...", // Dán mã của chị vào đây nếu nó báo lỗi
+            authDomain: "listerine-100ml-campaign.firebaseapp.com",
+            projectId: "listerine-100ml-campaign",
+            storageBucket: "listerine-100ml-campaign.appspot.com",
+            messagingSenderId: "...",
+            appId: "..."
         };
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'listerine-100ml-campaign';
@@ -283,9 +273,7 @@
         async function checkDeviceLimit() {
             const deviceRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('devices').doc(userId);
             const doc = await deviceRef.get();
-            if (doc.exists) {
-                showSuccess(doc.data().code);
-            }
+            if (doc.exists) showSuccess(doc.data().code);
         }
 
         const form = document.getElementById('sampling-form');
@@ -293,25 +281,21 @@
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
             const phone = document.getElementById('phone').value.trim();
-            const age = document.getElementById('age').value;
+            const ageVal = document.getElementById('age').value;
             const email = document.getElementById('email').value.trim();
             const consent = document.getElementById('consent').checked;
 
-            if (!consent) {
-                alert("Vui lòng đồng ý để tiếp tục!");
-                return;
-            }
+            if (!consent) { alert("Chị ơi, vui lòng tích chọn đồng ý để nhận quà nhé!"); return; }
 
             btn.disabled = true;
             btn.innerText = "ĐANG XỬ LÝ...";
 
             try {
-                // Kiểm tra trùng SĐT theo đúng logic file cũ
                 const phoneCheck = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations')
                     .where('phone', '==', phone).get();
                 
                 if (!phoneCheck.empty) {
-                    alert("Số điện thoại này đã nhận quà rồi!");
+                    alert("Số điện thoại này đã nhận quà rồi ạ!");
                     btn.disabled = false;
                     btn.innerText = "Xác nhận & Nhận mã";
                     return;
@@ -319,9 +303,14 @@
 
                 const giftCode = "LIS" + Math.floor(1000 + Math.random() * 9000);
 
-                // Lưu dữ liệu vào đúng đường dẫn cũ (Sử dụng appId 'listerine-100ml-campaign')
                 await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations').add({
-                    phone, age, email: email || "Không có", store: storeId, code: giftCode, consent: true, deviceId: userId,
+                    phone,
+                    age: parseInt(ageVal), // Chuyển sang số để khớp báo cáo cũ
+                    email: email || "Không có",
+                    store: storeId,
+                    code: giftCode,
+                    consent: true,
+                    deviceId: userId,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
@@ -333,7 +322,7 @@
 
             } catch (error) {
                 console.error(error);
-                alert("Lỗi kết nối, chị thử lại giúp em nhé!");
+                alert("Lỗi kết nối rồi chị, chị thử lại giúp em nhé!");
                 btn.disabled = false;
                 btn.innerText = "Xác nhận & Nhận mã";
             }
