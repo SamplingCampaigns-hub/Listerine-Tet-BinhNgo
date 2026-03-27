@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8f9fa; }
+        .purple-btn { background-color: #9333ea; color: white; transition: all 0.2s; }
+        .purple-btn:hover { background-color: #7e22ce; }
+        .green-btn { background-color: #10b981; color: white; }
         .header-text { color: #2d1b5a; font-weight: 800; font-style: italic; text-transform: uppercase; }
         .badge-purple { background-color: #f3e8ff; color: #7e22ce; border-radius: 8px; font-weight: 700; font-size: 11px; padding: 4px 10px; text-transform: uppercase; }
         .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #9333ea; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
@@ -33,13 +36,13 @@
                 <i class="fa-solid fa-shield-halved text-2xl"></i>
             </div>
             <h2 class="text-xl font-black text-white uppercase italic tracking-tighter mb-2">VINSTAR <span class="text-sky-400">BẢO MẬT</span></h2>
-            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-8">Vui lòng nhập mật khẩu để xem dữ liệu</p>
+            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-8">Hệ thống bảo mật 2026</p>
             
             <form id="login-form" class="space-y-4">
-                <input type="text" id="password-input" autocomplete="off" spellcheck="false" placeholder="Mật khẩu truy cập" class="w-full bg-slate-800 border border-white/5 p-4 rounded-2xl text-white outline-none focus:border-sky-500 text-center font-bold">
+                <input type="text" id="password-input" autocomplete="off" spellcheck="false" placeholder="Nhập mật khẩu..." class="w-full bg-slate-800 border border-white/5 p-4 rounded-2xl text-white outline-none focus:border-sky-500 text-center font-bold">
                 <button type="submit" id="btn-login" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all">XÁC NHẬN</button>
             </form>
-            <p id="error-msg" class="text-red-400 text-[10px] font-bold mt-4 uppercase hidden">Sai mật khẩu, chị kiểm tra lại nhé!</p>
+            <p id="error-msg" class="text-red-400 text-[10px] font-bold mt-4 uppercase hidden">Mật khẩu chưa đúng, chị kiểm tra lại nhé!</p>
         </div>
     </div>
 
@@ -51,13 +54,14 @@
                     <h1 class="text-2xl header-text">DỮ LIỆU CAMPAIGN</h1>
                     <div class="mt-2 flex items-center gap-2">
                         <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest border border-slate-200 px-2 py-1 rounded">TỔNG CỘNG:</span>
-                        <span id="counter" class="text-sm font-extrabold text-red-500">Đang nạp...</span>
+                        <span id="counter" class="text-sm font-extrabold text-red-500">Đang tìm dữ liệu...</span>
                         <span class="text-xs font-bold text-slate-400">/ 6.000 CHAI</span>
                     </div>
                 </div>
                 <div class="flex gap-2">
                     <button onclick="window.location.href='./index.html'" class="px-6 py-2 rounded-xl text-xs font-bold border border-slate-300 uppercase">Đóng</button>
                     <button id="btn-export" class="px-6 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-lg uppercase">Xuất Excel</button>
+                    <button onclick="window.open('https://samplingcampaigns-hub.github.io/Listerine-Tet-BinhNgo/qr-list', '_blank')" class="px-6 py-2 rounded-xl text-xs font-bold purple-btn shadow-lg uppercase">Lấy QR</button>
                 </div>
             </header>
 
@@ -79,7 +83,7 @@
                                 <td colspan="6" class="p-20 text-center">
                                     <div class="flex flex-col items-center justify-center gap-4">
                                         <div class="loading-spinner"></div>
-                                        <span id="loading-text" class="text-slate-400 uppercase tracking-widest text-[10px]">Đang kết nối kho 5440+ dữ liệu thực tế...</span>
+                                        <span id="loading-text" class="text-slate-400 uppercase tracking-widest text-[10px]">Đang quét toàn bộ các nhà kho dữ liệu cũ...</span>
                                     </div>
                                 </td>
                             </tr>
@@ -87,11 +91,15 @@
                     </table>
                 </div>
             </div>
+            
+            <!-- Footer thông tin kết nối -->
+            <div class="mt-6 text-[9px] text-slate-300 uppercase font-bold tracking-widest text-center">
+                Kết nối hiện tại: <span id="active-id" class="text-slate-400 italic">Checking...</span>
+            </div>
         </div>
     </div>
 
     <script>
-        // MẬT KHẨU: vinstar2026
         const SECURE_KEY = "vinstar2026"; 
 
         const loginForm = document.getElementById('login-form');
@@ -106,14 +114,14 @@
             if (input.toLowerCase() === SECURE_KEY) {
                 loginScreen.classList.add('hidden');
                 mainContent.classList.remove('hidden');
-                initFirebase();
+                startSearchingData();
             } else {
                 errorMsg.classList.remove('hidden');
                 document.getElementById('password-input').value = "";
             }
         };
 
-        function initFirebase() {
+        function startSearchingData() {
             const firebaseConfig = {
                 apiKey: "AIzaSyBmoGlurl-6yYPMa32Vop0N57P8DmXYOcw",
                 authDomain: "listerine-tet2026.firebaseapp.com",
@@ -123,8 +131,13 @@
                 appId: "1:76253494252:web:54e219e2de091fa779dec9"
             };
 
-            // 🚩 ĐÃ SỬA: Đổi ID về 'Listerine-Tet-BinhNgo' để khôi phục 5440 data
-            const appId = 'Listerine-Tet-BinhNgo';
+            // Danh sách các ID tiềm năng chứa 5440 data
+            const potentialIds = [
+                'listerine-100ml-campaign',
+                'Listerine-Tet-BinhNgo',
+                'listerine-tet2026',
+                'default-app-id'
+            ];
 
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
@@ -132,24 +145,47 @@
             const db = firebase.firestore();
             const auth = firebase.auth();
 
-            auth.signInAnonymously().then(() => {
-                const colRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations');
-                
-                colRef.onSnapshot((snapshot) => {
-                    let allData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    
-                    // Sắp xếp dữ liệu trong JS (Quy tắc 2)
-                    allData.sort((a, b) => {
-                        const timeA = a.timestamp?.seconds || 0;
-                        const timeB = b.timestamp?.seconds || 0;
-                        return timeB - timeA;
-                    });
+            auth.signInAnonymously().then(async () => {
+                let foundData = false;
 
-                    renderTable(allData, appId);
-                }, (err) => {
-                    console.error("Lỗi:", err);
-                    document.getElementById('loading-text').innerText = "Lỗi: Không tìm thấy nhà kho " + appId;
-                });
+                for (const id of potentialIds) {
+                    if (foundData) break;
+                    
+                    document.getElementById('active-id').innerText = "Đang quét nhà kho: " + id;
+                    
+                    try {
+                        const colRef = db.collection('artifacts').doc(id).collection('public').doc('data').collection('registrations');
+                        const snapshot = await colRef.get();
+
+                        if (!snapshot.empty && snapshot.docs.length > 10) { // Nếu có nhiều dữ liệu
+                            console.log("Tìm thấy dữ liệu tại ID:", id);
+                            document.getElementById('active-id').innerText = id + " (Đã kết nối)";
+                            
+                            // Thiết lập Listener cho Real-time tại ID này
+                            colRef.onSnapshot((liveSnapshot) => {
+                                let allData = liveSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                                
+                                // Sắp xếp trong JS (Quy tắc 2)
+                                allData.sort((a, b) => {
+                                    const timeA = a.timestamp?.seconds || 0;
+                                    const timeB = b.timestamp?.seconds || 0;
+                                    return timeB - timeA;
+                                });
+
+                                renderTable(allData, id);
+                            });
+                            foundData = true;
+                        }
+                    } catch (err) {
+                        console.log("Quét lỗi tại ID:", id, err);
+                    }
+                }
+
+                if (!foundData) {
+                    document.getElementById('loading-text').innerText = "Hệ thống đã quét hết các nhà kho nhưng vẫn không thấy dữ liệu. Chị hãy kiểm tra lại cấu hình Firebase.";
+                    document.getElementById('counter').innerText = "0";
+                    document.getElementById('data-table-body').innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Không tìm thấy dữ liệu ở bất kỳ ID nào.</td></tr>`;
+                }
             });
         }
 
@@ -174,7 +210,7 @@
                         <td class="px-8 py-4 text-slate-800">${item.phone || 'N/A'}</td>
                         <td class="px-8 py-4 text-slate-500 text-xs">${item.email || 'N/A'}</td>
                         <td class="px-8 py-4 text-center text-slate-400">${item.age || 'N/A'}</td>
-                        <td class="px-8 py-4 uppercase text-purple-600 text-xs italic">${item.store || item.station || 'Trạm chính'}</td>
+                        <td class="px-8 py-4 uppercase text-purple-600 text-xs italic font-bold">${item.store || item.station || 'Trạm chính'}</td>
                         <td class="px-8 py-4 text-right"><span class="badge-purple font-mono tracking-widest">${item.code || '---'}</span></td>
                     </tr>
                 `;
@@ -192,7 +228,7 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `Full_Data_Listerine_2026.csv`;
+            link.download = `Listerine_Full_Report_Export.csv`;
             link.click();
         };
     </script>
