@@ -78,7 +78,7 @@
                                 <td colspan="6" class="p-20 text-center">
                                     <div class="flex flex-col items-center justify-center gap-4">
                                         <div class="loading-spinner"></div>
-                                        <span id="loading-text" class="text-slate-400 uppercase tracking-widest text-[10px]">Đang nạp 5440+ dữ liệu từ kho...</span>
+                                        <span id="loading-text" class="text-slate-400 uppercase tracking-widest text-[10px]">Đang kết nối kho 5440+ dữ liệu...</span>
                                     </div>
                                 </td>
                             </tr>
@@ -102,10 +102,8 @@
             const input = document.getElementById('password-input').value.trim();
             
             if (input.toLowerCase() === SECURE_KEY) {
-                // ẨN MÀN HÌNH KHÓA NGAY LẬP TỨC
                 loginScreen.classList.add('hidden');
                 mainContent.classList.remove('hidden');
-                // BẮT ĐẦU NẠP DỮ LIỆU
                 initFirebase();
             } else {
                 errorMsg.classList.remove('hidden');
@@ -123,8 +121,8 @@
                 appId: "1:76253494252:web:54e219e2de091fa779dec9"
             };
 
-            // 🚩 CHỊ HỒNG LƯU Ý: Em đổi mã dự án về đúng tên repository để tìm thấy 5440 data
-            const appId = 'Listerine-Tet-BinhNgo';
+            // 🚩 ĐÃ SỬA: Dùng đúng ID 'listerine-100ml-campaign' từ file gốc của chị để tìm thấy 5440 data
+            const appId = 'listerine-100ml-campaign';
 
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
@@ -133,7 +131,6 @@
             const auth = firebase.auth();
 
             auth.signInAnonymously().then(() => {
-                // Đường dẫn chuẩn Rule 1
                 const colRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations');
                 
                 colRef.onSnapshot((snapshot) => {
@@ -161,7 +158,7 @@
             counter.innerText = data.length.toLocaleString() + " / 6.000 CHAI";
             
             if (data.length === 0) {
-                body.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Kho dữ liệu hiện đang trống.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Kho dữ liệu hiện đang trống (ID: listerine-100ml-campaign).</td></tr>`;
                 return;
             }
 
