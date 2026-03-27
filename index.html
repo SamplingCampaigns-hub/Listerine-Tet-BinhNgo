@@ -154,6 +154,12 @@
             letter-spacing: 0.2em;
             margin-top: 60px;
             text-align: center;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .footer-text:hover {
+            color: #cbd5e1;
         }
     </style>
 </head>
@@ -176,7 +182,7 @@
                     
                     <div class="location-tag mx-auto">
                         <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                        <span id="location-tag" class="text-[10px] font-black text-purple-600 uppercase italic">Đang xác định điểm...</span>
+                        <span id="location-tag-text" class="text-[10px] font-black text-purple-600 uppercase italic">Đang xác định điểm...</span>
                     </div>
                 </div>
 
@@ -233,7 +239,10 @@
                 <button onclick="location.reload()" class="mt-16 text-slate-300 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 pb-1">Đăng ký mới</button>
             </div>
 
-            <div class="footer-text uppercase">Listerine Campaign 2026</div>
+            <!-- PHẦN ẨN: Click để mở Dashboard -->
+            <div class="footer-text uppercase" onclick="window.open('https://samplingcampaigns-hub.github.io/Listerine-Tet-BinhNgo/dashboard', '_blank')">
+                Listerine Campaign 2026
+            </div>
         </div>
     </div>
 
@@ -255,7 +264,7 @@
 
         const params = new URLSearchParams(window.location.search);
         const storeId = params.get('store') || params.get('id') || 'Khach_Vang_Lai';
-        document.getElementById('location-tag').innerText = storeNames[storeId] || "Điểm phát lưu động";
+        document.getElementById('location-tag-text').innerText = storeNames[storeId] || "Điểm phát lưu động";
 
         let userId = "";
         auth.signInAnonymously().then(cred => {
