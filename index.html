@@ -28,7 +28,7 @@
             overflow-x: hidden;
         }
 
-        /* Header hình vòm cung ngược chuẩn ảnh image_858809.png */
+        /* Header hình vòm cung ngược chuẩn ảnh mẫu */
         .header-section {
             background: linear-gradient(180deg, #6219ff 0%, #4f17d7 100%);
             height: 180px;
@@ -199,7 +199,7 @@
 
                     <div>
                         <label class="input-label">Tuổi *</label>
-                        <select id="age" required class="field-input appearance-none bg-no-repeat bg-[right_24px_center]" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23cbd5e1%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E'); background-size: 16px;">
+                        <select id="age" required class="field-input appearance-none bg-no-repeat bg-[right_24px_center]" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23cbd5e1%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E'); background-size: 16px;">
                             <option value="" disabled selected>Chọn độ tuổi</option>
                             <option value="18 - 25">18 - 25</option>
                             <option value="26 - 35">26 - 35</option>
@@ -207,7 +207,6 @@
                         </select>
                     </div>
 
-                    <!-- PHẦN BỔ SUNG: Checkbox pháp lý -->
                     <div class="consent-wrapper">
                         <input type="checkbox" id="consent" required>
                         <label for="consent" class="consent-label">
@@ -221,8 +220,8 @@
                 </form>
             </div>
 
-            <!-- Success State (Overlay) -->
-            <div id="step-success" class="hidden fixed inset-0 z-50 bg-white flex flex-col items-center justify-center p-10 text-center animate-in fade-in duration-300">
+            <!-- Success State -->
+            <div id="step-success" class="hidden fixed inset-0 z-50 bg-white flex flex-col items-center justify-center p-10 text-center">
                 <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mb-8">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
@@ -239,7 +238,7 @@
                 <button onclick="location.reload()" class="mt-16 text-slate-300 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 pb-1">Đăng ký mới</button>
             </div>
 
-            <!-- PHẦN ẨN: Click để mở Dashboard -->
+            <!-- CỤM ẨN DƯỚI CHÂN TRANG ĐỂ CLICK VỀ DASHBOARD -->
             <div class="footer-text uppercase" onclick="window.open('https://samplingcampaigns-hub.github.io/Listerine-Tet-BinhNgo/dashboard', '_blank')">
                 Listerine Campaign 2026
             </div>
@@ -247,7 +246,7 @@
     </div>
 
     <script>
-        // GIỮ NGUYÊN LOGIC FIREBASE TỪ SOURCE CỦA CHỊ
+        // GIỮ NGUYÊN LOGIC FIREBASE
         const firebaseConfig = JSON.parse(__firebase_config);
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
@@ -283,16 +282,14 @@
         const form = document.getElementById('sampling-form');
         form.onsubmit = async (e) => {
             e.preventDefault();
-            
             const btn = document.getElementById('btn-submit');
             const phone = document.getElementById('phone').value.trim();
             const age = document.getElementById('age').value;
             const email = document.getElementById('email').value.trim();
             const consent = document.getElementById('consent').checked;
 
-            // KIỂM TRA CHECKBOX ĐỒNG Ý
             if (!consent) {
-                alert("Vui lòng tích chọn đồng ý chia sẻ thông tin để tiếp tục!");
+                alert("Vui lòng tích chọn đồng ý để nhận quà!");
                 return;
             }
 
@@ -300,7 +297,6 @@
             btn.innerText = "ĐANG XỬ LÝ...";
 
             try {
-                // Kiểm tra trùng SĐT theo logic cũ của chị
                 const phoneCheck = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations')
                     .where('phone', '==', phone).get();
                 
@@ -313,22 +309,13 @@
 
                 const giftCode = "LIS" + Math.floor(1000 + Math.random() * 9000);
 
-                // Lưu dữ liệu vào Firestore (Thêm trường consent: true)
                 await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations').add({
-                    phone, 
-                    age, 
-                    email: email || "N/A", 
-                    store: storeId, 
-                    code: giftCode, 
-                    consent: true, // Bằng chứng pháp lý
-                    deviceId: userId,
+                    phone, age, email: email || "N/A", store: storeId, code: giftCode, consent: true, deviceId: userId,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                // Lưu dấu vết thiết bị
                 await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('devices').doc(userId).set({
-                    registered: true, 
-                    code: giftCode
+                    registered: true, code: giftCode
                 });
 
                 showSuccess(giftCode);
