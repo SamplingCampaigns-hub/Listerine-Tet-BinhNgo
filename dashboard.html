@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dữ liệu Campaign Listerine 2026 - Secure Access</title>
+    <title>VINSTAR MASTER DASHBOARD - DATA RECOVERY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
@@ -11,57 +11,49 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8f9fa; }
-        .purple-btn { background-color: #9333ea; color: white; transition: all 0.2s; }
-        .purple-btn:hover { background-color: #7e22ce; }
-        .green-btn { background-color: #10b981; color: white; }
-        .header-text { color: #2d1b5a; font-weight: 800; font-style: italic; text-transform: uppercase; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
         .badge-purple { background-color: #f3e8ff; color: #7e22ce; border-radius: 8px; font-weight: 700; font-size: 11px; padding: 4px 10px; text-transform: uppercase; }
-        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #9333ea; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #0ea5e9; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        #login-screen { position: fixed; inset: 0; background-color: #020617; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; transition: opacity 0.5s; }
+        #login-screen { position: fixed; inset: 0; background-color: #020617; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .login-card { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 2.5rem; width: 100%; max-width: 400px; padding: 40px; text-align: center; }
         .hidden { display: none !important; }
-        
         #password-input { -webkit-text-security: disc; }
     </style>
 </head>
 <body class="p-6 md:p-10">
 
-    <!-- MÀN HÌNH NHẬP PASSWORD -->
+    <!-- MÀN HÌNH ĐĂNG NHẬP -->
     <div id="login-screen">
         <div class="login-card shadow-2xl">
-            <div class="w-16 h-16 bg-sky-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white shadow-lg shadow-sky-500/20">
-                <i class="fa-solid fa-shield-halved text-2xl"></i>
+            <div class="w-16 h-16 bg-sky-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white shadow-lg">
+                <i class="fa-solid fa-unlock-keyhole text-2xl"></i>
             </div>
-            <h2 class="text-xl font-black text-white uppercase italic tracking-tighter mb-2">VINSTAR <span class="text-sky-400">BẢO MẬT</span></h2>
-            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-8">Hệ thống bảo mật 2026</p>
-            
+            <h2 class="text-xl font-black text-white uppercase italic mb-2">HỆ THỐNG <span class="text-sky-400">TRUY XUẤT</span></h2>
+            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-8">Vinstar Media - Secure Portal</p>
             <form id="login-form" class="space-y-4">
-                <input type="text" id="password-input" autocomplete="off" spellcheck="false" placeholder="Nhập mật khẩu..." class="w-full bg-slate-800 border border-white/5 p-4 rounded-2xl text-white outline-none focus:border-sky-500 text-center font-bold">
-                <button type="submit" id="btn-login" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all">XÁC NHẬN</button>
+                <input type="text" id="password-input" autocomplete="off" placeholder="Nhập mật khẩu..." class="w-full bg-slate-800 border border-white/5 p-4 rounded-2xl text-white outline-none focus:border-sky-500 text-center font-bold">
+                <button type="submit" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all">MỞ KHO DỮ LIỆU</button>
             </form>
-            <p id="error-msg" class="text-red-400 text-[10px] font-bold mt-4 uppercase hidden">Mật khẩu chưa đúng, chị kiểm tra lại nhé!</p>
+            <p id="error-msg" class="text-red-400 text-[10px] font-bold mt-4 uppercase hidden">Mật khẩu không đúng!</p>
         </div>
     </div>
 
-    <!-- NỘI DUNG CHÍNH -->
+    <!-- GIAO DIỆN CHÍNH -->
     <div id="main-content" class="hidden">
         <div class="max-w-7xl mx-auto">
-            <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
                 <div>
-                    <h1 class="text-2xl header-text">DỮ LIỆU CAMPAIGN</h1>
+                    <h1 class="text-2xl font-black text-slate-800 uppercase italic">DỮ LIỆU CAMPAIGN REAL-TIME</h1>
                     <div class="mt-2 flex items-center gap-2">
                         <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest border border-slate-200 px-2 py-1 rounded">TỔNG CỘNG:</span>
-                        <span id="counter" class="text-sm font-extrabold text-red-500">Đang tìm dữ liệu...</span>
+                        <span id="counter" class="text-sm font-extrabold text-red-500 italic">Đang quét kho...</span>
                         <span class="text-xs font-bold text-slate-400">/ 6.000 CHAI</span>
                     </div>
                 </div>
                 <div class="flex gap-2">
                     <button onclick="window.location.href='./index.html'" class="px-6 py-2 rounded-xl text-xs font-bold border border-slate-300 uppercase">Đóng</button>
                     <button id="btn-export" class="px-6 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-lg uppercase">Xuất Excel</button>
-                    <button onclick="window.open('https://samplingcampaigns-hub.github.io/Listerine-Tet-BinhNgo/qr-list', '_blank')" class="px-6 py-2 rounded-xl text-xs font-bold purple-btn shadow-lg uppercase">Lấy QR</button>
                 </div>
             </header>
 
@@ -71,19 +63,19 @@
                         <thead>
                             <tr class="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                 <th class="px-8 py-5">Thời gian</th>
-                                <th class="px-8 py-5">SĐT</th>
+                                <th class="px-8 py-5">Số điện thoại</th>
                                 <th class="px-8 py-5">Email</th>
                                 <th class="px-8 py-5 text-center">Tuổi</th>
-                                <th class="px-8 py-5">Trạm</th>
-                                <th class="px-8 py-5 text-right">Mã quà</th>
+                                <th class="px-8 py-5">Trạm phát</th>
+                                <th class="px-8 py-5 text-right">Mã quà tặng</th>
                             </tr>
                         </thead>
                         <tbody id="data-table-body" class="text-sm font-bold text-slate-600">
                             <tr id="loading-row">
-                                <td colspan="6" class="p-20 text-center">
+                                <td colspan="6" class="p-32 text-center">
                                     <div class="flex flex-col items-center justify-center gap-4">
                                         <div class="loading-spinner"></div>
-                                        <span id="loading-text" class="text-slate-400 uppercase tracking-widest text-[10px]">Đang quét toàn bộ các nhà kho dữ liệu cũ...</span>
+                                        <span id="scan-status" class="text-slate-400 uppercase tracking-widest text-[10px] font-black">Máy quét đang lục soát các nhà kho dữ liệu cũ...</span>
                                     </div>
                                 </td>
                             </tr>
@@ -92,36 +84,30 @@
                 </div>
             </div>
             
-            <!-- Footer thông tin kết nối -->
-            <div class="mt-6 text-[9px] text-slate-300 uppercase font-bold tracking-widest text-center">
-                Kết nối hiện tại: <span id="active-id" class="text-slate-400 italic">Checking...</span>
+            <!-- Thông tin kỹ thuật (Ẩn với khách, chỉ chị Hồng thấy) -->
+            <div class="mt-8 text-center opacity-30">
+                <p id="active-id-info" class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Đang kiểm tra kết nối...</p>
             </div>
         </div>
     </div>
 
     <script>
         const SECURE_KEY = "vinstar2026"; 
-
         const loginForm = document.getElementById('login-form');
-        const loginScreen = document.getElementById('login-screen');
-        const mainContent = document.getElementById('main-content');
-        const errorMsg = document.getElementById('error-msg');
 
         loginForm.onsubmit = (e) => {
             e.preventDefault();
             const input = document.getElementById('password-input').value.trim();
-            
             if (input.toLowerCase() === SECURE_KEY) {
-                loginScreen.classList.add('hidden');
-                mainContent.classList.remove('hidden');
-                startSearchingData();
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                startDeepScan(); // Kích hoạt máy quét sâu
             } else {
-                errorMsg.classList.remove('hidden');
-                document.getElementById('password-input').value = "";
+                document.getElementById('error-msg').classList.remove('hidden');
             }
         };
 
-        function startSearchingData() {
+        async function startDeepScan() {
             const firebaseConfig = {
                 apiKey: "AIzaSyBmoGlurl-6yYPMa32Vop0N57P8DmXYOcw",
                 authDomain: "listerine-tet2026.firebaseapp.com",
@@ -131,86 +117,76 @@
                 appId: "1:76253494252:web:54e219e2de091fa779dec9"
             };
 
-            // Danh sách các ID tiềm năng chứa 5440 data
-            const potentialIds = [
+            // DANH SÁCH TẤT CẢ CÁC ID CÓ THỂ CHỨA 5440 DATA
+            const possibleIds = [
                 'listerine-100ml-campaign',
                 'Listerine-Tet-BinhNgo',
                 'listerine-tet2026',
-                'default-app-id'
+                'default-app-id',
+                'listerine-sampling-2026'
             ];
 
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
+            if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
             const db = firebase.firestore();
             const auth = firebase.auth();
 
-            auth.signInAnonymously().then(async () => {
-                let foundData = false;
+            try {
+                await auth.signInAnonymously();
+                let foundAnyData = false;
 
-                for (const id of potentialIds) {
-                    if (foundData) break;
+                for (const id of possibleIds) {
+                    if (foundAnyData) break;
                     
-                    document.getElementById('active-id').innerText = "Đang quét nhà kho: " + id;
+                    document.getElementById('active-id-info').innerText = "Đang kiểm tra kho: " + id;
                     
                     try {
                         const colRef = db.collection('artifacts').doc(id).collection('public').doc('data').collection('registrations');
-                        const snapshot = await colRef.get();
+                        const check = await colRef.limit(1).get();
 
-                        if (!snapshot.empty && snapshot.docs.length > 10) { // Nếu có nhiều dữ liệu
-                            console.log("Tìm thấy dữ liệu tại ID:", id);
-                            document.getElementById('active-id').innerText = id + " (Đã kết nối)";
+                        if (!check.empty) {
+                            foundAnyData = true;
+                            document.getElementById('active-id-info').innerText = "KẾT NỐI THÀNH CÔNG KHO: " + id;
                             
-                            // Thiết lập Listener cho Real-time tại ID này
-                            colRef.onSnapshot((liveSnapshot) => {
-                                let allData = liveSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                                
-                                // Sắp xếp trong JS (Quy tắc 2)
-                                allData.sort((a, b) => {
-                                    const timeA = a.timestamp?.seconds || 0;
-                                    const timeB = b.timestamp?.seconds || 0;
-                                    return timeB - timeA;
-                                });
-
-                                renderTable(allData, id);
+                            // Lắng nghe dữ liệu thực tế tại đây
+                            colRef.onSnapshot((snapshot) => {
+                                let items = snapshot.docs.map(doc => doc.data());
+                                // Sắp xếp trong JS để nhanh hơn
+                                items.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+                                renderTable(items);
                             });
-                            foundData = true;
                         }
-                    } catch (err) {
-                        console.log("Quét lỗi tại ID:", id, err);
-                    }
+                    } catch (e) { console.log("Bỏ qua kho:", id); }
                 }
 
-                if (!foundData) {
-                    document.getElementById('loading-text').innerText = "Hệ thống đã quét hết các nhà kho nhưng vẫn không thấy dữ liệu. Chị hãy kiểm tra lại cấu hình Firebase.";
+                if (!foundAnyData) {
+                    document.getElementById('scan-status').innerText = "KHÔNG TÌM THẤY DỮ LIỆU. Vui lòng liên hệ hỗ trợ kỹ thuật.";
                     document.getElementById('counter').innerText = "0";
-                    document.getElementById('data-table-body').innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Không tìm thấy dữ liệu ở bất kỳ ID nào.</td></tr>`;
                 }
-            });
+
+            } catch (err) {
+                console.error(err);
+            }
         }
 
-        function renderTable(data, currentId) {
+        function renderTable(data) {
             const body = document.getElementById('data-table-body');
-            const counter = document.getElementById('counter');
-            
-            counter.innerText = data.length.toLocaleString();
+            document.getElementById('counter').innerText = data.length.toLocaleString();
             
             if (data.length === 0) {
-                body.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Kho dữ liệu hiện đang trống (ID: ${currentId}).</td></tr>`;
+                body.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Kho này hiện chưa có dữ liệu.</td></tr>`;
                 return;
             }
 
             body.innerHTML = '';
             data.forEach(item => {
                 const dateStr = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleString('vi-VN') : '---';
-
                 body.innerHTML += `
                     <tr class="border-b border-slate-50 hover:bg-slate-50 transition-all">
                         <td class="px-8 py-4 text-slate-400 font-mono text-[11px]">${dateStr}</td>
                         <td class="px-8 py-4 text-slate-800">${item.phone || 'N/A'}</td>
                         <td class="px-8 py-4 text-slate-500 text-xs">${item.email || 'N/A'}</td>
                         <td class="px-8 py-4 text-center text-slate-400">${item.age || 'N/A'}</td>
-                        <td class="px-8 py-4 uppercase text-purple-600 text-xs italic font-bold">${item.store || item.station || 'Trạm chính'}</td>
+                        <td class="px-8 py-4 uppercase text-sky-600 text-xs italic font-black">${item.store || item.station || 'Trạm Vinstar'}</td>
                         <td class="px-8 py-4 text-right"><span class="badge-purple font-mono tracking-widest">${item.code || '---'}</span></td>
                     </tr>
                 `;
@@ -221,14 +197,12 @@
             let csv = "\uFEFFThời gian,SĐT,Email,Tuổi,Trạm,Mã quà\n";
             document.querySelectorAll("tbody tr").forEach(row => {
                 const cols = row.querySelectorAll("td");
-                if (cols.length > 0) {
-                    csv += Array.from(cols).map(c => `"${c.innerText}"`).join(",") + "\n";
-                }
+                if (cols.length > 0) csv += Array.from(cols).map(c => `"${c.innerText}"`).join(",") + "\n";
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `Listerine_Full_Report_Export.csv`;
+            link.download = `Full_Report_Listerine_2026.csv`;
             link.click();
         };
     </script>
