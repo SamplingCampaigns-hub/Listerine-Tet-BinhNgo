@@ -199,9 +199,9 @@
                         <label class="input-label">Tuổi *</label>
                         <select id="age" required class="field-input appearance-none bg-no-repeat bg-[right_24px_center]" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23cbd5e1%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E'); background-size: 16px;">
                             <option value="" disabled selected>Chọn độ tuổi</option>
-                            <option value="18 - 25">18 - 25</option>
-                            <option value="26 - 35">26 - 35</option>
-                            <option value="Trên 35">Trên 35</option>
+                            <option value="18">18 - 25</option>
+                            <option value="26">26 - 35</option>
+                            <option value="36">Trên 35</option>
                         </select>
                     </div>
 
@@ -236,7 +236,7 @@
                 <button onclick="location.reload()" class="mt-16 text-slate-300 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 pb-1">Đăng ký mới</button>
             </div>
 
-            <!-- 💡 SỬA LỖI TẠI ĐÂY: Thêm đuôi .html vào đường dẫn -->
+            <!-- 💡 SỬA LỖI TẠI ĐÂY: Dùng link tương đối để GitHub không bị 404 -->
             <div class="footer-text uppercase" onclick="window.open('./dashboard.html', '_blank')">
                 © 2026 Listerine Sampling Campaign
             </div>
@@ -254,7 +254,7 @@
             appId: "1:76253494252:web:54e219e2de091fa779dec9"
         };
 
-        const appId = 'listerine-100ml-campaign'; // ID cũ để link về data cũ
+        const appId = 'listerine-100ml-campaign'; // ID của kho dữ liệu cũ
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
@@ -292,12 +292,12 @@
             
             const btn = document.getElementById('btn-submit');
             const phone = document.getElementById('phone').value.trim();
-            const age = document.getElementById('age').value;
+            const ageVal = document.getElementById('age').value;
             const email = document.getElementById('email').value.trim();
             const consent = document.getElementById('consent').checked;
 
             if (!consent) {
-                alert("Chị ơi, vui lòng tích chọn đồng ý để nhận quà nhé!");
+                alert("Chị ơi, hãy đồng ý để nhận quà nhé!");
                 return;
             }
 
@@ -318,11 +318,11 @@
 
                 const giftCode = "LIS" + Math.floor(1000 + Math.random() * 9000);
 
-                // Lưu dữ liệu vào đúng đường dẫn cũ
+                // Lưu dữ liệu vào đúng đường dẫn và định dạng cũ
                 await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations').add({
                     phone, 
-                    age, 
-                    email: email || "N/A", 
+                    age: parseInt(ageVal), // PHẢI LÀ SỐ ĐỂ LINK VỀ DASHBOARD CŨ
+                    email: email || "Không có", 
                     store: storeId, 
                     code: giftCode, 
                     consent: true, 
