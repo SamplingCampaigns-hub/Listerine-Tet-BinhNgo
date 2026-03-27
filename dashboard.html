@@ -64,7 +64,7 @@
                             <td colspan="6" class="p-20 text-center">
                                 <div class="flex flex-col items-center justify-center gap-4">
                                     <div class="loading-spinner"></div>
-                                    <span class="text-slate-400 uppercase tracking-widest text-[10px]">Đang kết nối kho dữ liệu thực tế...</span>
+                                    <span class="text-slate-400 uppercase tracking-widest text-[10px]">Đang tải hơn 5000 dữ liệu từ kho...</span>
                                 </div>
                             </td>
                         </tr>
@@ -75,7 +75,7 @@
     </div>
 
     <script>
-        // BỘ MÃ KẾT NỐI DATA CỦA CHỊ HỒNG
+        // SỬ DỤNG BỘ MÃ CỦA CHỊ ĐỂ TRUY XUẤT ĐÚNG KHO 5440 DATA
         const firebaseConfig = {
             apiKey: "AIzaSyBmoGlurl-6yYPMa32Vop0N57P8DmXYOcw",
             authDomain: "listerine-tet2026.firebaseapp.com",
@@ -98,13 +98,21 @@
         auth.signInAnonymously().then(() => {
             const colRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations');
             
-            // Listen for Real-time updates
-            colRef.orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
+            // TUÂN THỦ QUY TẮC 2: Tải dữ liệu thô và sắp xếp trong bộ nhớ (JS)
+            colRef.onSnapshot((snapshot) => {
                 allData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Sắp xếp dữ liệu mới nhất lên đầu bằng mã JavaScript
+                allData.sort((a, b) => {
+                    const timeA = a.timestamp?.seconds || 0;
+                    const timeB = b.timestamp?.seconds || 0;
+                    return timeB - timeA;
+                });
+
                 renderTable(allData);
             }, (err) => {
                 console.error("Lỗi:", err);
-                document.getElementById('data-table-body').innerHTML = `<tr><td colspan="6" class="p-10 text-center text-red-400">Không có quyền truy cập dữ liệu. Chị kiểm tra cấu hình Firebase nhé!</td></tr>`;
+                document.getElementById('data-table-body').innerHTML = `<tr><td colspan="6" class="p-10 text-center text-red-400">Không thể kết nối kho dữ liệu. Vui lòng kiểm tra cấu hình.</td></tr>`;
             });
         });
 
@@ -113,7 +121,7 @@
             const counter = document.getElementById('counter');
             
             if (data.length === 0) {
-                body.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Chưa có dữ liệu đăng ký.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Chưa có dữ liệu đăng ký nào trong kho.</td></tr>`;
                 counter.innerText = "0";
                 return;
             }
@@ -124,7 +132,7 @@
             data.forEach(item => {
                 const dateStr = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleString('vi-VN', {
                     hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric'
-                }) : 'Đang xử lý...';
+                }) : '---';
 
                 body.innerHTML += `
                     <tr class="data-row">
@@ -132,25 +140,25 @@
                         <td class="px-8 py-5 text-slate-800">${item.phone || 'N/A'}</td>
                         <td class="px-8 py-5 text-slate-500 font-medium lowercase text-xs">${item.email || 'N/A'}</td>
                         <td class="px-8 py-5 text-center text-slate-400">${item.age || 'N/A'}</td>
-                        <td class="px-8 py-5 uppercase text-purple-600 text-xs tracking-tighter">${item.store || 'Khách vãng lai'}</td>
+                        <td class="px-8 py-5 uppercase text-purple-600 text-xs tracking-tighter">${item.store || item.station || 'Khách vãng lai'}</td>
                         <td class="px-8 py-5 text-right"><span class="badge-purple font-mono tracking-widest">${item.code || '---'}</span></td>
                     </tr>
                 `;
             });
         }
 
-        // Export Excel Simple Logic
+        // Xuất Excel
         document.getElementById('btn-export').onclick = () => {
             if (allData.length === 0) return;
             let csv = "\uFEFFThời gian,SĐT,Email,Tuổi,Trạm,Mã quà\n";
             allData.forEach(row => {
                 const date = row.timestamp ? new Date(row.timestamp.seconds * 1000).toLocaleString('vi-VN') : '';
-                csv += `"${date}","${row.phone}","${row.email}","${row.age}","${row.store}","${row.code}"\n`;
+                csv += `"${date}","${row.phone}","${row.email}","${row.age}","${row.store || row.station}","${row.code}"\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", "Listerine_Campaign_Data_Realtime.csv");
+            link.setAttribute("download", `Listerine_Full_Data_${new Date().toLocaleDateString()}.csv`);
             link.click();
         };
     </script>
