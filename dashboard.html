@@ -3,230 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vinstar Media - Executive Dashboard 2026 (Ultra PDF)</title>
+    <title>Dữ liệu Campaign Listerine 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Thư viện tạo PDF trực tiếp -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --v-navy: #020617; --v-sky: #0ea5e9; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; color: #1e293b; margin: 0; }
-        
-        .v-container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
-        .v-card { background: #020617; border-radius: 2.5rem; border: 1px solid rgba(255,255,255,0.1); color: white; padding: 40px; position: relative; overflow: hidden; }
-        .v-stat-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(10px); border-radius: 1.5rem; padding: 25px; border: 1px solid rgba(255,255,255,0.05); }
-        
-        #processing-msg { display: none; }
-        #processing-msg.active { display: flex; }
-
-        .white-card { background: white; color: #1e293b; border-radius: 2.5rem; padding: 40px; }
-
-        @media print {
-            .no-print { display: none !important; }
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8f9fa; }
+        .purple-btn { background-color: #9333ea; color: white; transition: all 0.2s; }
+        .purple-btn:hover { background-color: #7e22ce; }
+        .green-btn { background-color: #10b981; color: white; }
+        .header-text { color: #2d1b5a; font-weight: 800; font-style: italic; text-transform: uppercase; }
+        .table-head { color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 2px solid #f1f5f9; }
+        .data-row { border-bottom: 1px solid #f1f5f9; }
+        .data-row:hover { background-color: #fcfaff; }
+        .badge-purple { background-color: #f3e8ff; color: #7e22ce; border-radius: 8px; font-weight: 700; font-size: 11px; padding: 4px 10px; text-transform: uppercase; }
+        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #9333ea; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
+<body class="p-6 md:p-10">
 
-    <div id="processing-msg" class="fixed inset-0 z-[9999] bg-slate-900/95 items-center justify-center flex-col text-white hidden">
-        <div class="w-16 h-16 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mb-6"></div>
-        <p class="text-2xl font-black italic uppercase tracking-tighter mb-2">Đang khởi tạo tệp PDF...</p>
-        <p class="text-slate-400 text-sm italic">Hệ thống đang nén dữ liệu cho chị Hồng.</p>
-    </div>
-
-    <div class="v-container">
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6 no-print">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
-                <h1 class="text-3xl font-black tracking-tighter uppercase italic text-slate-900">VINSTAR <span class="text-sky-500">DASHBOARD</span></h1>
-                <p class="text-slate-400 font-bold uppercase tracking-widest text-[9px]">Dữ liệu thu thập Real-time</p>
+                <h1 class="text-2xl header-text">DỮ LIỆU CAMPAIGN</h1>
+                <div class="mt-2 flex items-center gap-2">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest border border-slate-200 px-2 py-1 rounded">TỔNG CỘNG:</span>
+                    <span id="counter" class="text-sm font-extrabold text-red-500">Đang tải...</span>
+                    <span class="text-xs font-bold text-slate-400">/ 6.000 CHAI</span>
+                </div>
             </div>
-            <div class="flex gap-3">
-                <button id="btnExportPDF" onclick="exportDirectPDF()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-2xl font-black text-xs shadow-xl shadow-emerald-200 transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-file-arrow-down"></i> TẢI PDF BÁO CÁO
-                </button>
+            
+            <div class="flex gap-2">
+                <button onclick="window.location.href='./index.html'" class="px-6 py-2 rounded-xl text-xs font-bold border border-slate-300 hover:bg-slate-50 uppercase">Đóng</button>
+                <button id="btn-export" class="px-6 py-2 rounded-xl text-xs font-bold green-btn shadow-lg uppercase">Xuất Excel</button>
+                <button onclick="window.open('https://samplingcampaigns-hub.github.io/Listerine-Tet-BinhNgo/qr-list', '_blank')" class="px-6 py-2 rounded-xl text-xs font-bold purple-btn shadow-lg uppercase">Lấy QR</button>
             </div>
         </header>
 
-        <!-- Nạp file tại đây -->
-        <div id="upload-area" class="v-card !bg-white !text-slate-800 border-2 border-dashed border-sky-200 p-20 text-center flex flex-col items-center justify-center no-print">
-            <div class="w-20 h-20 bg-sky-50 rounded-3xl flex items-center justify-center mb-6 text-sky-500">
-                <i class="fa-solid fa-file-csv text-3xl"></i>
-            </div>
-            <h2 class="text-2xl font-black mb-2 uppercase italic">Nạp tệp LISTERINE_REPORT_2026.csv</h2>
-            <p class="text-slate-400 mb-8 max-w-sm mx-auto italic text-sm">Chị chọn tệp dữ liệu đã tải từ Firebase để xem phân tích.</p>
-            <input type="file" id="csv-input" accept=".csv" class="hidden" onchange="handleFile(this)">
-            <button onclick="document.getElementById('csv-input').click()" class="bg-sky-500 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-sky-200">Chọn tệp từ máy tính</button>
-        </div>
-
-        <div id="report-content" class="hidden space-y-8">
-            <!-- Phần nội dung báo cáo -->
-            <div class="v-card shadow-2xl">
-                <div class="flex justify-between items-start mb-12">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
-                            <i class="fa-solid fa-chart-line"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-black uppercase italic tracking-tight text-white leading-none mb-1">Campaign Analytics</h2>
-                            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.3em]">Listerine Sampling Project</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-                    <div class="v-stat-card border-b-4 border-sky-500">
-                        <p class="text-[9px] font-black text-slate-500 uppercase mb-2">Tổng mẫu phát</p>
-                        <h3 id="statTotal" class="text-4xl font-black text-white italic tracking-tighter">0</h3>
-                    </div>
-                    <div class="v-stat-card border-b-4 border-orange-500">
-                        <p class="text-[9px] font-black text-slate-500 uppercase mb-2">Tỉ lệ Gen Z</p>
-                        <h3 id="statGenZ" class="text-4xl font-black text-white italic tracking-tighter">0%</h3>
-                    </div>
-                    <div class="v-stat-card border-b-4 border-emerald-500">
-                        <p class="text-[9px] font-black text-slate-500 uppercase mb-2">Trạm Top 1</p>
-                        <h3 id="statTopSt" class="text-sm font-black text-white uppercase italic truncate">-</h3>
-                    </div>
-                    <div class="v-stat-card border-b-4 border-white/10">
-                        <p class="text-[9px] font-black text-slate-500 uppercase mb-2">Độ sạch Data</p>
-                        <h3 class="text-4xl font-black text-emerald-400 italic tracking-tighter">100%</h3>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <div class="lg:col-span-8 bg-slate-900/50 p-10 rounded-[2.5rem] border border-white/5 h-[400px]">
-                        <canvas id="lineChart"></canvas>
-                    </div>
-                    <div class="lg:col-span-4 bg-slate-900/50 p-10 rounded-[2.5rem] border border-white/5 flex flex-col justify-center">
-                        <canvas id="doughnutChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="white-card shadow-xl">
-                <h4 class="text-xl font-black uppercase italic tracking-tighter text-slate-800 mb-6 border-b pb-4">Nhật ký dữ liệu chi tiết</h4>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="text-[10px] font-black text-slate-400 uppercase border-b bg-slate-50">
-                                <th class="p-4">Thời gian</th>
-                                <th class="p-4">SĐT</th>
-                                <th class="p-4">Trạm</th>
-                                <th class="p-4 text-center">Tuổi</th>
-                                <th class="p-4 text-right">Mã Quà</th>
-                            </tr>
-                        </thead>
-                        <tbody id="log-body" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
+        <!-- Data Table Card -->
+        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="table-head bg-slate-50/50">
+                            <th class="px-8 py-5">Thời gian</th>
+                            <th class="px-8 py-5">SĐT</th>
+                            <th class="px-8 py-5">Email</th>
+                            <th class="px-8 py-5 text-center">Tuổi</th>
+                            <th class="px-8 py-5">Trạm</th>
+                            <th class="px-8 py-5 text-right">Mã quà</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table-body" class="text-sm font-bold text-slate-600">
+                        <!-- Loading placeholder -->
+                        <tr id="loading-row">
+                            <td colspan="6" class="p-20 text-center">
+                                <div class="flex flex-col items-center justify-center gap-4">
+                                    <div class="loading-spinner"></div>
+                                    <span class="text-slate-400 uppercase tracking-widest text-[10px]">Đang kết nối kho dữ liệu thực tế...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <script>
-        let myCharts = {};
-        Chart.defaults.animation = false;
+        // BỘ MÃ KẾT NỐI DATA CỦA CHỊ HỒNG
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmoGlurl-6yYPMa32Vop0N57P8DmXYOcw",
+            authDomain: "listerine-tet2026.firebaseapp.com",
+            projectId: "listerine-tet2026",
+            storageBucket: "listerine-tet2026.firebasestorage.app",
+            messagingSenderId: "76253494252",
+            appId: "1:76253494252:web:54e219e2de091fa779dec9"
+        };
 
-        function handleFile(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => processCSV(e.target.result);
-            reader.readAsText(file);
-        }
+        const appId = 'listerine-100ml-campaign';
 
-        function processCSV(text) {
-            const lines = text.split(/\r?\n/).filter(l => l.trim());
-            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-            const data = lines.slice(1).map(line => {
-                const values = line.split(/,(?=(?:[^"]*"){2})*[^"]*$)/);
-                let obj = {};
-                headers.forEach((h, i) => obj[h] = values[i]?.trim().replace(/^"|"$/g, ''));
-                return obj;
+        // Initialize
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let allData = [];
+
+        // Auth and Listen
+        auth.signInAnonymously().then(() => {
+            const colRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations');
+            
+            // Listen for Real-time updates
+            colRef.orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
+                allData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderTable(allData);
+            }, (err) => {
+                console.error("Lỗi:", err);
+                document.getElementById('data-table-body').innerHTML = `<tr><td colspan="6" class="p-10 text-center text-red-400">Không có quyền truy cập dữ liệu. Chị kiểm tra cấu hình Firebase nhé!</td></tr>`;
             });
+        });
 
-            analyze(data);
-            document.getElementById('upload-area').classList.add('hidden');
-            document.getElementById('report-content').classList.remove('hidden');
-            document.getElementById('btnExportPDF').classList.remove('hidden');
-        }
+        function renderTable(data) {
+            const body = document.getElementById('data-table-body');
+            const counter = document.getElementById('counter');
+            
+            if (data.length === 0) {
+                body.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Chưa có dữ liệu đăng ký.</td></tr>`;
+                counter.innerText = "0";
+                return;
+            }
 
-        function analyze(data) {
-            const stats = { total: 0, stations: {}, ages: {}, daily: {} };
-            data.forEach(row => {
-                const st = row['Trạm'] || 'Khác';
-                const age = row['Tuổi'] || 'N/A';
-                const date = (row['Thời gian'] || '').split(' ')[1] || 'N/A';
-                if (date !== 'N/A') {
-                    stats.total++;
-                    stats.stations[st] = (stats.stations[st] || 0) + 1;
-                    stats.ages[age] = (stats.ages[age] || 0) + 1;
-                    if (!stats.daily[date]) stats.daily[date] = {};
-                    stats.daily[date][st] = (stats.daily[date][st] || 0) + 1;
-                }
-            });
-
-            document.getElementById('statTotal').innerText = stats.total.toLocaleString();
-            const topSt = Object.entries(stats.stations).sort((a,b) => b[1]-a[1])[0];
-            document.getElementById('statTopSt').innerText = topSt ? topSt[0] : '-';
-            const genZ = stats.ages['18 - 25'] || 0;
-            document.getElementById('statGenZ').innerText = Math.round((genZ/stats.total)*100) + '%';
-
-            renderCharts(stats);
-            renderLog(data);
-        }
-
-        function renderCharts(stats) {
-            const lineCtx = document.getElementById('lineChart').getContext('2d');
-            const doughCtx = document.getElementById('doughnutChart').getContext('2d');
-
-            if (myCharts.line) myCharts.line.destroy();
-            if (myCharts.dough) myCharts.dough.destroy();
-
-            const dates = Object.keys(stats.daily).sort();
-            const stationNames = Object.keys(stats.stations);
-
-            myCharts.line = new Chart(lineCtx, {
-                type: 'line',
-                data: {
-                    labels: dates,
-                    datasets: stationNames.map((name, i) => ({
-                        label: name,
-                        data: dates.map(d => stats.daily[d][name] || 0),
-                        borderColor: ['#0ea5e9', '#f97316', '#10b981'][i%3],
-                        fill: false, tension: 0.4
-                    }))
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8' } } } }
-            });
-
-            myCharts.dough = new Chart(doughCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(stats.ages),
-                    datasets: [{ data: Object.values(stats.ages), backgroundColor: ['#0ea5e9', '#f37021', '#334155'], borderWidth: 0 }]
-                },
-                options: { cutout: '70%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
-            });
-        }
-
-        function renderLog(data) {
-            const body = document.getElementById('log-body');
+            counter.innerText = data.length.toLocaleString();
             body.innerHTML = '';
-            data.slice(0, 30).forEach(row => {
-                body.innerHTML += `<tr><td class="p-4">${row['Thời gian']}</td><td class="p-4 font-bold">${row['SĐT']}</td><td class="p-4 font-black text-sky-600 uppercase">${row['Trạm']}</td><td class="p-4 text-center">${row['Tuổi']}</td><td class="p-4 text-right font-mono font-black text-emerald-600">${row['Mã quà tặng']}</td></tr>`;
+
+            data.forEach(item => {
+                const dateStr = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleString('vi-VN', {
+                    hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric'
+                }) : 'Đang xử lý...';
+
+                body.innerHTML += `
+                    <tr class="data-row">
+                        <td class="px-8 py-5 text-slate-400 font-medium font-mono text-[12px]">${dateStr}</td>
+                        <td class="px-8 py-5 text-slate-800">${item.phone || 'N/A'}</td>
+                        <td class="px-8 py-5 text-slate-500 font-medium lowercase text-xs">${item.email || 'N/A'}</td>
+                        <td class="px-8 py-5 text-center text-slate-400">${item.age || 'N/A'}</td>
+                        <td class="px-8 py-5 uppercase text-purple-600 text-xs tracking-tighter">${item.store || 'Khách vãng lai'}</td>
+                        <td class="px-8 py-5 text-right"><span class="badge-purple font-mono tracking-widest">${item.code || '---'}</span></td>
+                    </tr>
+                `;
             });
         }
 
-        function exportDirectPDF() {
-            const element = document.getElementById('report-content');
-            document.getElementById('processing-msg').classList.add('active');
-            html2pdf().set({ margin: 10, filename: 'Bao_Cao_Listerine_2026.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { format: 'a4', orientation: 'landscape' } }).from(element).save().then(() => {
-                document.getElementById('processing-msg').classList.remove('active');
+        // Export Excel Simple Logic
+        document.getElementById('btn-export').onclick = () => {
+            if (allData.length === 0) return;
+            let csv = "\uFEFFThời gian,SĐT,Email,Tuổi,Trạm,Mã quà\n";
+            allData.forEach(row => {
+                const date = row.timestamp ? new Date(row.timestamp.seconds * 1000).toLocaleString('vi-VN') : '';
+                csv += `"${date}","${row.phone}","${row.email}","${row.age}","${row.store}","${row.code}"\n`;
             });
-        }
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", "Listerine_Campaign_Data_Realtime.csv");
+            link.click();
+        };
     </script>
 </body>
 </html>
