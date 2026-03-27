@@ -20,6 +20,11 @@
         #login-screen { position: fixed; inset: 0; background-color: #020617; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; transition: opacity 0.5s; }
         .login-card { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 2.5rem; width: 100%; max-width: 400px; padding: 40px; text-align: center; }
         .hidden { display: none !important; }
+        
+        /* Input styling for password */
+        #password-input {
+            -webkit-text-security: disc; /* Bảo mật hơn cho input type text để tránh auto-fill sai */
+        }
     </style>
 </head>
 <body class="p-6 md:p-10">
@@ -34,10 +39,11 @@
             <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-8">Hệ thống bảo mật 2026</p>
             
             <form id="login-form" class="space-y-4">
-                <input type="password" id="password-input" placeholder="Nhập mật khẩu..." class="w-full bg-slate-800 border border-white/5 p-4 rounded-2xl text-white outline-none focus:border-sky-500 text-center font-bold">
+                <!-- Thêm autocomplete="off" và spellcheck="false" để tránh lỗi gõ tiếng Việt -->
+                <input type="text" id="password-input" autocomplete="off" spellcheck="false" placeholder="Nhập mật khẩu..." class="w-full bg-slate-800 border border-white/5 p-4 rounded-2xl text-white outline-none focus:border-sky-500 text-center font-bold">
                 <button type="submit" id="btn-login" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all">TRUY CẬP NGAY</button>
             </form>
-            <p id="error-msg" class="text-red-400 text-[10px] font-bold mt-4 uppercase hidden">Sai mật khẩu, chị kiểm tra lại nhé!</p>
+            <p id="error-msg" class="text-red-400 text-[10px] font-bold mt-4 uppercase hidden">Mật khẩu chưa đúng, chị kiểm tra Unikey nhé!</p>
         </div>
     </div>
 
@@ -76,7 +82,7 @@
                                 <td colspan="6" class="p-20 text-center">
                                     <div class="flex flex-col items-center justify-center gap-4">
                                         <div class="loading-spinner"></div>
-                                        <span id="loading-text" class="text-slate-400 uppercase tracking-widest text-[10px]">Đang nạp hơn 5000 dữ liệu thực tế...</span>
+                                        <span id="loading-text" class="text-slate-400 uppercase tracking-widest text-[10px]">Đang nạp toàn bộ 5440+ dữ liệu thực tế...</span>
                                     </div>
                                 </td>
                             </tr>
@@ -88,26 +94,24 @@
     </div>
 
     <script>
-        // MẬT KHẨU MỚI: vinstar2026
+        // MẬT KHẨU: vinstar2026
         const SECURE_KEY = "vinstar2026"; 
 
         const loginForm = document.getElementById('login-form');
         const loginScreen = document.getElementById('login-screen');
         const mainContent = document.getElementById('main-content');
         const errorMsg = document.getElementById('error-msg');
-        const btnLogin = document.getElementById('btn-login');
 
         loginForm.onsubmit = (e) => {
             e.preventDefault();
-            const input = document.getElementById('password-input').value;
+            // Lấy giá trị và xóa khoảng trắng ở 2 đầu (.trim())
+            const input = document.getElementById('password-input').value.trim();
             
-            if (input === SECURE_KEY) {
-                // Bước 1: Ẩn ngay màn hình khóa
+            if (input.toLowerCase() === SECURE_KEY) {
                 loginScreen.style.opacity = '0';
                 setTimeout(() => {
                     loginScreen.classList.add('hidden');
                     mainContent.classList.remove('hidden');
-                    // Bước 2: Sau khi giao diện hiện rồi mới bắt đầu nạp data
                     initFirebase();
                 }, 400);
             } else {
@@ -134,15 +138,13 @@
             const db = firebase.firestore();
             const auth = firebase.auth();
 
-            let allData = [];
-
             auth.signInAnonymously().then(() => {
                 const colRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations');
                 
-                // Tải dữ liệu và sắp xếp tại máy khách (Client-side) để tránh lỗi Index
                 colRef.onSnapshot((snapshot) => {
-                    allData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    let allData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     
+                    // Sắp xếp dữ liệu trong JS để không bị lỗi 404/Empty do thiếu Index
                     allData.sort((a, b) => {
                         const timeA = a.timestamp?.seconds || 0;
                         const timeB = b.timestamp?.seconds || 0;
@@ -174,7 +176,7 @@
                         <td class="px-8 py-4 text-slate-500 text-xs">${item.email || 'N/A'}</td>
                         <td class="px-8 py-4 text-center text-slate-400">${item.age || 'N/A'}</td>
                         <td class="px-8 py-4 uppercase text-purple-600 text-xs">${item.store || item.station || 'Trạm chính'}</td>
-                        <td class="px-8 py-4 text-right"><span class="badge-purple">${item.code || '---'}</span></td>
+                        <td class="px-8 py-4 text-right"><span class="badge-purple font-mono tracking-widest">${item.code || '---'}</span></td>
                     </tr>
                 `;
             });
@@ -191,7 +193,7 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `Listerine_Data_Export.csv`;
+            link.download = `Listerine_Full_Data_Export.csv`;
             link.click();
         };
     </script>
