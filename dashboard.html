@@ -12,20 +12,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8f9fa; }
-        .purple-btn { background-color: #9333ea; color: white; transition: all 0.2s; }
-        .purple-btn:hover { background-color: #7e22ce; }
-        .green-btn { background-color: #10b981; color: white; }
         .header-text { color: #2d1b5a; font-weight: 800; font-style: italic; text-transform: uppercase; }
-        .table-head { color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 2px solid #f1f5f9; }
-        .data-row { border-bottom: 1px solid #f1f5f9; }
-        .data-row:hover { background-color: #fcfaff; }
         .badge-purple { background-color: #f3e8ff; color: #7e22ce; border-radius: 8px; font-weight: 700; font-size: 11px; padding: 4px 10px; text-transform: uppercase; }
         .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #9333ea; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Chế độ bảo mật */
-        #login-screen { position: fixed; inset: 0; background-color: #020617; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        #login-screen { position: fixed; inset: 0; background-color: #020617; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; transition: opacity 0.5s; }
         .login-card { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 2.5rem; width: 100%; max-width: 400px; padding: 40px; text-align: center; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body class="p-6 md:p-10">
@@ -33,47 +27,42 @@
     <!-- MÀN HÌNH NHẬP PASSWORD -->
     <div id="login-screen">
         <div class="login-card shadow-2xl">
-            <div class="w-20 h-20 bg-sky-500 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg shadow-sky-500/20 text-white">
-                <i class="fa-solid fa-lock text-3xl"></i>
+            <div class="w-16 h-16 bg-sky-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white shadow-lg shadow-sky-500/20">
+                <i class="fa-solid fa-shield-halved text-2xl"></i>
             </div>
-            <h2 class="text-2xl font-black text-white uppercase italic tracking-tighter mb-2">VINSTAR <span class="text-sky-400">SECURE</span></h2>
-            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-8">Vui lòng nhập mật khẩu để xem dữ liệu</p>
+            <h2 class="text-xl font-black text-white uppercase italic tracking-tighter mb-2">VINSTAR <span class="text-sky-400">DỮ LIỆU</span></h2>
+            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-8">Hệ thống bảo mật 2026</p>
             
             <form id="login-form" class="space-y-4">
-                <input type="password" id="password-input" placeholder="Mật khẩu truy cập" class="w-full bg-slate-800 border border-white/5 p-4 rounded-2xl text-white outline-none focus:border-sky-500 text-center font-bold">
-                <button type="submit" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all">XÁC NHẬN</button>
+                <input type="password" id="password-input" placeholder="Nhập mật khẩu..." class="w-full bg-slate-800 border border-white/5 p-4 rounded-2xl text-white outline-none focus:border-sky-500 text-center font-bold">
+                <button type="submit" id="btn-login" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all">TRUY CẬP NGAY</button>
             </form>
-            <p id="error-msg" class="text-red-400 text-[10px] font-bold mt-4 uppercase hidden">Mật khẩu không chính xác!</p>
+            <p id="error-msg" class="text-red-400 text-[10px] font-bold mt-4 uppercase hidden">Sai mật khẩu, chị kiểm tra lại nhé!</p>
         </div>
     </div>
 
     <!-- NỘI DUNG CHÍNH (ẨN MẶC ĐỊNH) -->
     <div id="main-content" class="hidden">
         <div class="max-w-7xl mx-auto">
-            <!-- Header Section -->
             <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
                     <h1 class="text-2xl header-text">DỮ LIỆU CAMPAIGN</h1>
                     <div class="mt-2 flex items-center gap-2">
                         <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest border border-slate-200 px-2 py-1 rounded">TỔNG CỘNG:</span>
                         <span id="counter" class="text-sm font-extrabold text-red-500">Đang tải...</span>
-                        <span class="text-xs font-bold text-slate-400">/ 6.000 CHAI</span>
                     </div>
                 </div>
-                
                 <div class="flex gap-2">
-                    <button onclick="window.location.href='./index.html'" class="px-6 py-2 rounded-xl text-xs font-bold border border-slate-300 hover:bg-slate-50 uppercase">Đóng</button>
-                    <button id="btn-export" class="px-6 py-2 rounded-xl text-xs font-bold green-btn shadow-lg uppercase">Xuất Excel</button>
-                    <button onclick="window.open('https://samplingcampaigns-hub.github.io/Listerine-Tet-BinhNgo/qr-list', '_blank')" class="px-6 py-2 rounded-xl text-xs font-bold purple-btn shadow-lg uppercase">Lấy QR</button>
+                    <button onclick="window.location.href='./index.html'" class="px-6 py-2 rounded-xl text-xs font-bold border border-slate-300 uppercase">Đóng</button>
+                    <button id="btn-export" class="px-6 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-lg uppercase">Xuất Excel</button>
                 </div>
             </header>
 
-            <!-- Data Table Card -->
             <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead>
-                            <tr class="table-head bg-slate-50/50">
+                            <tr class="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                 <th class="px-8 py-5">Thời gian</th>
                                 <th class="px-8 py-5">SĐT</th>
                                 <th class="px-8 py-5">Email</th>
@@ -87,7 +76,7 @@
                                 <td colspan="6" class="p-20 text-center">
                                     <div class="flex flex-col items-center justify-center gap-4">
                                         <div class="loading-spinner"></div>
-                                        <span class="text-slate-400 uppercase tracking-widest text-[10px]">Đang tải dữ liệu từ kho bảo mật...</span>
+                                        <span id="loading-text" class="text-slate-400 uppercase tracking-widest text-[10px]">Đang nạp hơn 5000 dữ liệu thực tế...</span>
                                     </div>
                                 </td>
                             </tr>
@@ -99,23 +88,31 @@
     </div>
 
     <script>
-        // 🚩 CHỊ HỒNG CÓ THỂ ĐỔI MẬT KHẨU TẠI ĐÂY
-        const SECURE_KEY = "Vinst@r0625"; 
+        // MẬT KHẨU MỚI: vinstar2026
+        const SECURE_KEY = "vinstar2026"; 
 
         const loginForm = document.getElementById('login-form');
         const loginScreen = document.getElementById('login-screen');
         const mainContent = document.getElementById('main-content');
         const errorMsg = document.getElementById('error-msg');
+        const btnLogin = document.getElementById('btn-login');
 
         loginForm.onsubmit = (e) => {
             e.preventDefault();
             const input = document.getElementById('password-input').value;
+            
             if (input === SECURE_KEY) {
-                loginScreen.classList.add('hidden');
-                mainContent.classList.remove('hidden');
-                initFirebase(); // Chỉ nạp data sau khi nhập đúng pass
+                // Bước 1: Ẩn ngay màn hình khóa
+                loginScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loginScreen.classList.add('hidden');
+                    mainContent.classList.remove('hidden');
+                    // Bước 2: Sau khi giao diện hiện rồi mới bắt đầu nạp data
+                    initFirebase();
+                }, 400);
             } else {
                 errorMsg.classList.remove('hidden');
+                document.getElementById('password-input').value = "";
             }
         };
 
@@ -131,7 +128,9 @@
 
             const appId = 'listerine-100ml-campaign';
 
-            firebase.initializeApp(firebaseConfig);
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
             const db = firebase.firestore();
             const auth = firebase.auth();
 
@@ -140,6 +139,7 @@
             auth.signInAnonymously().then(() => {
                 const colRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations');
                 
+                // Tải dữ liệu và sắp xếp tại máy khách (Client-side) để tránh lỗi Index
                 colRef.onSnapshot((snapshot) => {
                     allData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     
@@ -152,7 +152,7 @@
                     renderTable(allData);
                 }, (err) => {
                     console.error("Lỗi:", err);
-                    document.getElementById('data-table-body').innerHTML = `<tr><td colspan="6" class="p-10 text-center text-red-400">Lỗi kết nối database. Chị kiểm tra cấu hình nhé!</td></tr>`;
+                    document.getElementById('loading-text').innerText = "Lỗi kết nối. Chị kiểm tra lại cấu hình nhé!";
                 });
             });
         }
@@ -161,44 +161,37 @@
             const body = document.getElementById('data-table-body');
             const counter = document.getElementById('counter');
             
-            if (data.length === 0) {
-                body.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Chưa có dữ liệu trong kho.</td></tr>`;
-                counter.innerText = "0";
-                return;
-            }
-
-            counter.innerText = data.length.toLocaleString();
+            counter.innerText = data.length.toLocaleString() + " / 6.000 CHAI";
             body.innerHTML = '';
 
             data.forEach(item => {
-                const dateStr = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleString('vi-VN', {
-                    hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric'
-                }) : '---';
+                const dateStr = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleString('vi-VN') : '---';
 
                 body.innerHTML += `
-                    <tr class="data-row">
-                        <td class="px-8 py-5 text-slate-400 font-medium font-mono text-[12px]">${dateStr}</td>
-                        <td class="px-8 py-5 text-slate-800">${item.phone || 'N/A'}</td>
-                        <td class="px-8 py-5 text-slate-500 font-medium lowercase text-xs">${item.email || 'N/A'}</td>
-                        <td class="px-8 py-5 text-center text-slate-400">${item.age || 'N/A'}</td>
-                        <td class="px-8 py-5 uppercase text-purple-600 text-xs tracking-tighter">${item.store || item.station || 'Khách vãng lai'}</td>
-                        <td class="px-8 py-5 text-right"><span class="badge-purple font-mono tracking-widest">${item.code || '---'}</span></td>
+                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition-all">
+                        <td class="px-8 py-4 text-slate-400 font-mono text-[11px]">${dateStr}</td>
+                        <td class="px-8 py-4 text-slate-800">${item.phone || 'N/A'}</td>
+                        <td class="px-8 py-4 text-slate-500 text-xs">${item.email || 'N/A'}</td>
+                        <td class="px-8 py-4 text-center text-slate-400">${item.age || 'N/A'}</td>
+                        <td class="px-8 py-4 uppercase text-purple-600 text-xs">${item.store || item.station || 'Trạm chính'}</td>
+                        <td class="px-8 py-4 text-right"><span class="badge-purple">${item.code || '---'}</span></td>
                     </tr>
                 `;
             });
         }
 
         document.getElementById('btn-export').onclick = () => {
-            if (allData.length === 0) return;
             let csv = "\uFEFFThời gian,SĐT,Email,Tuổi,Trạm,Mã quà\n";
-            allData.forEach(row => {
-                const date = row.timestamp ? new Date(row.timestamp.seconds * 1000).toLocaleString('vi-VN') : '';
-                csv += `"${date}","${row.phone}","${row.email}","${row.age}","${row.store || row.station}","${row.code}"\n`;
+            document.querySelectorAll("tbody tr").forEach(row => {
+                const cols = row.querySelectorAll("td");
+                if (cols.length > 0) {
+                    csv += Array.from(cols).map(c => `"${c.innerText}"`).join(",") + "\n";
+                }
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", `Listerine_Secure_Export_${new Date().toLocaleDateString()}.csv`);
+            link.download = `Listerine_Data_Export.csv`;
             link.click();
         };
     </script>
