@@ -32,14 +32,14 @@
             <div class="w-16 h-16 bg-sky-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white shadow-lg shadow-sky-500/20">
                 <i class="fa-solid fa-shield-halved text-2xl"></i>
             </div>
-            <h2 class="text-xl font-black text-white uppercase italic tracking-tighter mb-2">VINSTAR <span class="text-sky-400">DỮ LIỆU</span></h2>
-            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-8">Hệ thống bảo mật 2026</p>
+            <h2 class="text-xl font-black text-white uppercase italic tracking-tighter mb-2">VINSTAR <span class="text-sky-400">BẢO MẬT</span></h2>
+            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-8">Vui lòng nhập mật khẩu để xem dữ liệu</p>
             
             <form id="login-form" class="space-y-4">
-                <input type="text" id="password-input" autocomplete="off" spellcheck="false" placeholder="Nhập mật khẩu..." class="w-full bg-slate-800 border border-white/5 p-4 rounded-2xl text-white outline-none focus:border-sky-500 text-center font-bold">
-                <button type="submit" id="btn-login" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all">TRUY CẬP NGAY</button>
+                <input type="text" id="password-input" autocomplete="off" spellcheck="false" placeholder="Mật khẩu truy cập" class="w-full bg-slate-800 border border-white/5 p-4 rounded-2xl text-white outline-none focus:border-sky-500 text-center font-bold">
+                <button type="submit" id="btn-login" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all">XÁC NHẬN</button>
             </form>
-            <p id="error-msg" class="text-red-400 text-[10px] font-bold mt-4 uppercase hidden">Mật khẩu chưa đúng, chị kiểm tra lại nhé!</p>
+            <p id="error-msg" class="text-red-400 text-[10px] font-bold mt-4 uppercase hidden">Sai mật khẩu, chị kiểm tra lại nhé!</p>
         </div>
     </div>
 
@@ -52,6 +52,7 @@
                     <div class="mt-2 flex items-center gap-2">
                         <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest border border-slate-200 px-2 py-1 rounded">TỔNG CỘNG:</span>
                         <span id="counter" class="text-sm font-extrabold text-red-500">Đang nạp...</span>
+                        <span class="text-xs font-bold text-slate-400">/ 6.000 CHAI</span>
                     </div>
                 </div>
                 <div class="flex gap-2">
@@ -78,7 +79,7 @@
                                 <td colspan="6" class="p-20 text-center">
                                     <div class="flex flex-col items-center justify-center gap-4">
                                         <div class="loading-spinner"></div>
-                                        <span id="loading-text" class="text-slate-400 uppercase tracking-widest text-[10px]">Đang kết nối kho 5440+ dữ liệu...</span>
+                                        <span id="loading-text" class="text-slate-400 uppercase tracking-widest text-[10px]">Đang kết nối kho 5440+ dữ liệu thực tế...</span>
                                     </div>
                                 </td>
                             </tr>
@@ -90,6 +91,7 @@
     </div>
 
     <script>
+        // MẬT KHẨU: vinstar2026
         const SECURE_KEY = "vinstar2026"; 
 
         const loginForm = document.getElementById('login-form');
@@ -121,8 +123,8 @@
                 appId: "1:76253494252:web:54e219e2de091fa779dec9"
             };
 
-            // 🚩 ĐÃ SỬA: Dùng đúng ID 'listerine-100ml-campaign' từ file gốc của chị để tìm thấy 5440 data
-            const appId = 'listerine-100ml-campaign';
+            // 🚩 ĐÃ SỬA: Đổi ID về 'Listerine-Tet-BinhNgo' để khôi phục 5440 data
+            const appId = 'Listerine-Tet-BinhNgo';
 
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
@@ -143,22 +145,22 @@
                         return timeB - timeA;
                     });
 
-                    renderTable(allData);
+                    renderTable(allData, appId);
                 }, (err) => {
                     console.error("Lỗi:", err);
-                    document.getElementById('loading-text').innerText = "Không có quyền xem kho dữ liệu này.";
+                    document.getElementById('loading-text').innerText = "Lỗi: Không tìm thấy nhà kho " + appId;
                 });
             });
         }
 
-        function renderTable(data) {
+        function renderTable(data, currentId) {
             const body = document.getElementById('data-table-body');
             const counter = document.getElementById('counter');
             
-            counter.innerText = data.length.toLocaleString() + " / 6.000 CHAI";
+            counter.innerText = data.length.toLocaleString();
             
             if (data.length === 0) {
-                body.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Kho dữ liệu hiện đang trống (ID: listerine-100ml-campaign).</td></tr>`;
+                body.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-slate-300 italic">Kho dữ liệu hiện đang trống (ID: ${currentId}).</td></tr>`;
                 return;
             }
 
