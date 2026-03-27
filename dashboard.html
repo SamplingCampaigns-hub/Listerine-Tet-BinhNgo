@@ -99,8 +99,8 @@
     </div>
 
     <script>
-        // MẬT KHẨU TRUY CẬP
-        const SECURE_KEY = "vinstar2026"; 
+        // 🚩 CHỊ HỒNG CÓ THỂ ĐỔI MẬT KHẨU TẠI ĐÂY
+        const SECURE_KEY = "Vinst@r0625"; 
 
         const loginForm = document.getElementById('login-form');
         const loginScreen = document.getElementById('login-screen');
@@ -192,7 +192,7 @@
             if (allData.length === 0) return;
             let csv = "\uFEFFThời gian,SĐT,Email,Tuổi,Trạm,Mã quà\n";
             allData.forEach(row => {
-                const date = row.timestamp? new Date(row.timestamp.seconds * 1000).toLocaleString('vi-VN') : '';
+                const date = row.timestamp ? new Date(row.timestamp.seconds * 1000).toLocaleString('vi-VN') : '';
                 csv += `"${date}","${row.phone}","${row.email}","${row.age}","${row.store || row.station}","${row.code}"\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
