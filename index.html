@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listerine - Bình Ngọ Khỏe Xinh</title>
+    <title>Listerine Sampling - Nhận Quà Miễn Phí</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase SDK Compat versions -->
+    <!-- Sử dụng đúng thư viện Firebase từ bản gốc của chị để đảm bảo thông data -->
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"></script>
@@ -70,12 +70,6 @@
             text-align: center;
         }
 
-        .location-tag-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-
         .location-tag {
             display: inline-flex;
             align-items: center;
@@ -84,6 +78,7 @@
             padding: 5px 15px;
             border-radius: 99px;
             border: 1px solid #fae8ff;
+            margin-bottom: 25px;
         }
 
         .input-label {
@@ -107,12 +102,6 @@
             font-weight: 700;
             color: #334155;
             outline: none;
-            box-sizing: border-box;
-        }
-
-        .field-input:focus {
-            background-color: #ffffff !important;
-            box-shadow: 0 0 0 2px #6219ff;
         }
 
         .btn-confirm {
@@ -132,11 +121,9 @@
             cursor: pointer;
         }
 
-        .btn-confirm:active {
-            transform: scale(0.97);
-        }
+        .btn-confirm:active { transform: scale(0.97); }
 
-        /* Checkbox cụm nội dung pháp lý */
+        /* Checkbox nội dung pháp lý */
         .consent-wrapper {
             display: flex;
             align-items: flex-start;
@@ -149,7 +136,6 @@
             width: 18px;
             height: 18px;
             margin-top: 2px;
-            cursor: pointer;
         }
 
         .consent-label {
@@ -157,7 +143,6 @@
             color: #94a3b8;
             line-height: 1.4;
             font-weight: 600;
-            cursor: pointer;
         }
 
         .footer-text {
@@ -170,10 +155,6 @@
             text-align: center;
             cursor: pointer;
         }
-        
-        .footer-text:hover {
-            color: #94a3b8;
-        }
 
         .hidden { display: none !important; }
     </style>
@@ -183,23 +164,21 @@
     <div class="main-container">
         <!-- Header -->
         <div class="header-section">
-            <h1 class="text-4xl font-black italic tracking-tighter uppercase leading-none">LISTERINE®</h1>
-            <p class="text-[9px] font-bold uppercase tracking-[0.25em] mt-2 opacity-90 text-center px-4">Bình Ngọ Khỏe Xinh - Ăn Tết Hết Mình</p>
+            <h1 class="text-4xl font-black italic tracking-tighter uppercase leading-none text-white">LISTERINE®</h1>
+            <p class="text-[9px] font-bold uppercase tracking-[0.25em] mt-2 opacity-90 text-center px-4 text-white">Bình Ngọ Khỏe Xinh - Ăn Tết Hết Mình</p>
         </div>
 
         <!-- Form Content -->
         <div class="form-card">
             <div id="step-form">
-                <div class="text-center">
+                <div class="text-center flex flex-col items-center">
                     <h2 class="title-text">
                         Đăng ký nhận ngay quà <br> tặng 100ml
                     </h2>
                     
-                    <div class="location-tag-container">
-                        <div class="location-tag">
-                            <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                            <span id="location-tag-text" class="text-[10px] font-black text-purple-600 uppercase italic">Đang xác định điểm...</span>
-                        </div>
+                    <div class="location-tag">
+                        <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                        <span id="location-tag-text" class="text-[10px] font-black text-purple-600 uppercase italic">Đang xác định điểm...</span>
                     </div>
                 </div>
 
@@ -216,7 +195,7 @@
 
                     <div>
                         <label class="input-label">Tuổi *</label>
-                        <select id="age" required class="field-input appearance-none bg-no-repeat bg-[right_24px_center]" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23cbd5e1%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E'); background-size: 16px;">
+                        <select id="age" required class="field-input appearance-none bg-no-repeat bg-[right_24px_center]" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23cbd5e1%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E'); background-size: 16px;">
                             <option value="" disabled selected>Chọn độ tuổi</option>
                             <option value="18 - 25">18 - 25</option>
                             <option value="26 - 35">26 - 35</option>
@@ -255,15 +234,14 @@
                 <button onclick="location.reload()" class="mt-16 text-slate-300 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 pb-1">Đăng ký mới</button>
             </div>
 
-            <!-- Click to Dashboard -->
             <div class="footer-text uppercase" onclick="window.open('https://samplingcampaigns-hub.github.io/Listerine-Tet-BinhNgo/dashboard', '_blank')">
-                Listerine Campaign 2026
+                © 2026 Listerine Sampling Campaign
             </div>
         </div>
     </div>
 
     <script>
-        // GIỮ NGUYÊN LOGIC FIREBASE
+        // SỬ DỤNG LẠI CHÍNH XÁC LOGIC TỪ BẢN CŨ ĐỂ KHÔNG MẤT DATA
         const firebaseConfig = JSON.parse(__firebase_config);
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
@@ -286,17 +264,13 @@
         auth.signInAnonymously().then(cred => {
             userId = cred.user.uid;
             checkDeviceLimit();
-        }).catch(err => console.error("Auth error:", err));
+        });
 
         async function checkDeviceLimit() {
-            try {
-                const deviceRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('devices').doc(userId);
-                const doc = await deviceRef.get();
-                if (doc.exists) {
-                    showSuccess(doc.data().code);
-                }
-            } catch (e) {
-                console.error("Device check failed:", e);
+            const deviceRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('devices').doc(userId);
+            const doc = await deviceRef.get();
+            if (doc.exists) {
+                showSuccess(doc.data().code);
             }
         }
 
@@ -310,7 +284,7 @@
             const consent = document.getElementById('consent').checked;
 
             if (!consent) {
-                alert("Vui lòng tích chọn đồng ý để nhận quà!");
+                alert("Vui lòng đồng ý để tiếp tục!");
                 return;
             }
 
@@ -318,7 +292,6 @@
             btn.innerText = "ĐANG XỬ LÝ...";
 
             try {
-                // Kiểm tra trùng SĐT
                 const phoneCheck = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations')
                     .where('phone', '==', phone).get();
                 
@@ -331,13 +304,11 @@
 
                 const giftCode = "LIS" + Math.floor(1000 + Math.random() * 9000);
 
-                // Lưu vào Firestore
                 await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('registrations').add({
                     phone, age, email: email || "N/A", store: storeId, code: giftCode, consent: true, deviceId: userId,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                // Lưu dấu vết thiết bị
                 await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('devices').doc(userId).set({
                     registered: true, code: giftCode
                 });
@@ -346,7 +317,7 @@
 
             } catch (error) {
                 console.error(error);
-                alert("Lỗi kết nối, vui lòng thử lại!");
+                alert("Lỗi kết nối, chị thử lại giúp em nhé!");
                 btn.disabled = false;
                 btn.innerText = "Xác nhận & Nhận mã";
             }
@@ -354,7 +325,6 @@
 
         function showSuccess(code) {
             document.getElementById('code-display').innerText = code;
-            document.getElementById('step-form').classList.add('hidden');
             document.getElementById('step-success').classList.remove('hidden');
         }
     </script>
